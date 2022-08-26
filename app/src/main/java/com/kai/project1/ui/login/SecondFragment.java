@@ -1,4 +1,4 @@
-package com.kai.project1.ui;
+package com.kai.project1.ui.login;
 
 import android.os.Bundle;
 import android.view.LayoutInflater;
