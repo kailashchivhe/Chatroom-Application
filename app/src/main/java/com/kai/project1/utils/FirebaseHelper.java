@@ -151,4 +151,8 @@ public class FirebaseHelper {
     public static void logout(){
         firebaseAuth.signOut();
     }
+
+    public static void profile_update(){
+
+    }
 }
