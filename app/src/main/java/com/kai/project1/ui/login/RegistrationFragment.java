@@ -64,7 +64,7 @@ public class RegistrationFragment extends Fragment implements RegisterListener {
         super.onActivityCreated(savedInstanceState);
 
         getActivity().setTitle("Registration");
-        FirebaseHelper.initFirebase();
+//        FirebaseHelper.initFirebase();
         builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Alert!!!!");
         builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
@@ -153,18 +153,27 @@ public class RegistrationFragment extends Fragment implements RegisterListener {
         if(!email.isEmpty() && !password.isEmpty() && !firstName.isEmpty() && !lastName.isEmpty() && !gender.isEmpty() && !city.isEmpty() && !bitmapProfile.equals(null)){
             FirebaseHelper.register(email,password,firstName,lastName,city,gender,bitmapProfile,this);
         }
+        else{
+            builder.setMessage("Please enter Data");
+            AlertDialog alertDialog = builder.create();
+            alertDialog.show();
+        }
     }
     void onCancelButtonClicked(){
         //Goto login page
+        NavHostFragment.findNavController(this).navigate(R.id.action_RegistrationFragment_to_LoginFragment);
     }
 
     @Override
     public void onSuccess() {
         // Goto login page
+        NavHostFragment.findNavController(this).navigate(R.id.action_RegistrationFragment_to_LoginFragment);
     }
 
     @Override
     public void onFailure(String message) {
-
+        builder.setMessage(message);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }

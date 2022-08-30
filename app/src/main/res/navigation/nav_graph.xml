@@ -8,20 +8,34 @@
     <fragment
         android:id="@+id/LoginFragment"
         android:name="com.kai.project1.ui.login.LoginFragment"
-        android:label="@string/first_fragment_label">
+        android:label="@string/login_fragment_label">
 
         <action
             android:id="@+id/action_LoginFragment_to_RegistrationFragment"
             app:destination="@id/RegistrationFragment" />
+        <action
+            android:id="@+id/action_LoginFragment_to_HomeFragment"
+            app:destination="@id/HomeFragment" />
     </fragment>
+
+    <fragment
+        android:id="@+id/HomeFragment"
+        android:name="com.kai.project1.ui.home.HomeFragment"
+        android:label="@string/home_fragment_label"
+        tools:layout="@layout/fragment_home">
+
+
+    </fragment>
+
     <fragment
         android:id="@+id/RegistrationFragment"
         android:name="com.kai.project1.ui.login.RegistrationFragment"
-        android:label="@string/second_fragment_label"
+        android:label="@string/registration_fragment_label"
         tools:layout="@layout/fragment_registration">
 
         <action
             android:id="@+id/action_RegistrationFragment_to_LoginFragment"
             app:destination="@id/LoginFragment" />
     </fragment>
+
 </navigation>

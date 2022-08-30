@@ -69,6 +69,7 @@ public class LoginFragment extends Fragment implements LoginListener {
             @Override
             public void onClick(View view) {
                 //Goto Registeration page
+                onRegisterButtonClicked();
             }
         });
     }
@@ -88,13 +89,21 @@ public class LoginFragment extends Fragment implements LoginListener {
         }
     }
 
+    private void onRegisterButtonClicked(){
+        NavHostFragment.findNavController(this).navigate(R.id.action_LoginFragment_to_RegistrationFragment);
+    }
+
     @Override
     public void onSuccess() {
         //Go to home page
+        NavHostFragment.findNavController(this).navigate(R.id.action_LoginFragment_to_HomeFragment);
     }
 
     @Override
     public void onFailure(String message) {
         // Show failure msg
+        builder.setMessage(message);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }
