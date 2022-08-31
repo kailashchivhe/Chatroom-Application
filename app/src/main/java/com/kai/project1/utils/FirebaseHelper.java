@@ -7,6 +7,7 @@ import android.util.Log;
 import android.widget.Toast;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -17,16 +18,22 @@ import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FirebaseFirestore;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.kai.project1.listener.LoginListener;
+import com.kai.project1.listener.ProfileListener;
 import com.kai.project1.listener.RegisterListener;
 
 import java.io.ByteArrayOutputStream;
+import java.util.Collection;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
 
 public class FirebaseHelper {
     static FirebaseAuth firebaseAuth;
@@ -107,14 +114,17 @@ public class FirebaseHelper {
             public void onComplete(@NonNull Task<AuthResult> task) {
                 if(task.isSuccessful()){
                     FirebaseUser user = FirebaseAuth.getInstance().getCurrentUser();
-                    UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder().setDisplayName(firstName+lastName).build();
+                    UserProfileChangeRequest userProfileChangeRequest = new UserProfileChangeRequest.Builder().setDisplayName(firstName+ " " + lastName).build();
                     user.updateProfile(userProfileChangeRequest).addOnCompleteListener(new OnCompleteListener<Void>() {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
                                 DocumentReference dr = db.collection("Project1").document("Users").collection("Users").document(firebaseAuth.getCurrentUser().getUid());
                                 HashMap<String,Object> map = new HashMap<>();
-                                map.put("name",firebaseAuth.getCurrentUser().getDisplayName());
+                                map.put("firstname",firstName);
+                                map.put("lastname",lastName);
+                                map.put("email",email);
+                                map.put("password",password);
                                 map.put("userid", firebaseAuth.getCurrentUser().getUid());
                                 map.put("city",city);
                                 map.put("gender",gender);
@@ -124,6 +134,7 @@ public class FirebaseHelper {
                                         if(task.isSuccessful()){
                                             //image profile upload left
                                             upload(bitmapProfile);
+                                            registerListener.onSuccess();
                                         }
                                         else{
                                             //Profile details not set properly
@@ -131,7 +142,6 @@ public class FirebaseHelper {
                                         }
                                     }
                                 });
-
                             }
                             else{
                                 // Profile name not set properly
@@ -152,7 +162,43 @@ public class FirebaseHelper {
         firebaseAuth.signOut();
     }
 
-    public static void profile_update(){
+    public static void profileUpdate(String password, String firstName, String lastName, String city, String gender, Bitmap bitmapProfile, ProfileListener profileListener){
+        DocumentReference dr = db.collection("Project1").document("Users").collection("Users").document(firebaseAuth.getCurrentUser().getUid());
+        HashMap<String,Object> map = new HashMap<>();
+        map.put("first name",firstName);
+        map.put("last name",lastName);
+        map.put("city",city);
+        map.put("gender",gender);
+        dr.update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    profileListener.onSuccess();
+                }
+                else{
+                    profileListener.onFailure(task.getException().getMessage());
+                }
+            }
+        });
+    }
 
+    public static String userDetails(FirebaseUser user){
+//        HashMap<String,Object> ans = new HashMap<>();
+        String firstname = null;
+        DocumentReference dr = db.collection("Project1").document("Users").collection("Users").document(user.getUid());
+        dr.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    System.out.println("Vidit Sethi" + task.getResult().get("firstname"));
+                    Log.d(TAG, "Firstname: " + task.getResult().get("firstname"));
+                }
+                else{
+
+                }
+            }
+        });
+        return firstname;
+//        return ans;
     }
 }
