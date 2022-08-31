@@ -30,6 +30,7 @@ import com.kai.project1.R;
 import com.kai.project1.databinding.FragmentProfileBinding;
 import com.kai.project1.listener.ProfileListener;
 import com.kai.project1.utils.FirebaseHelper;
+import com.kai.project1.utils.User;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -96,12 +97,13 @@ public class ProfileFragment extends Fragment  implements ProfileListener {
                 onUpdateClicked();
             }
         });
-        binding.imageViewProfile.setOnClickListener(new View.OnClickListener() {
+        binding.buttonProfileProfile.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 onProfileClicked();
             }
         });
+
     }
     ActivityResultLauncher<Intent> startForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
         @Override
@@ -147,8 +149,10 @@ public class ProfileFragment extends Fragment  implements ProfileListener {
         }
     }
     void onUpdateClicked(){
+        String userid = FirebaseHelper.getUser().getUid();
         String firstName = binding.editTextProfileFirstName.getText().toString();
         String lastName = binding.editTextProfileLastName.getText().toString();
+        String email = binding.editTextProfileEmail.getText().toString();
         String password = binding.editTextProfilePassword.getText().toString();
         String city = binding.editTextProfileCity.getText().toString();
         int genderID = binding.RadioGroupProfileGender.getCheckedRadioButtonId();
@@ -160,6 +164,7 @@ public class ProfileFragment extends Fragment  implements ProfileListener {
             gender = "female";
         }
         if(!password.isEmpty() && !firstName.isEmpty() && !lastName.isEmpty() && !gender.isEmpty() && !city.isEmpty() && !bitmapProfile.equals(null)){
+            User user = new User(firstName,lastName,userid,gender,city,email,password);
             FirebaseHelper.profileUpdate(password,firstName,lastName,city,gender,bitmapProfile,this);
         }
         else{

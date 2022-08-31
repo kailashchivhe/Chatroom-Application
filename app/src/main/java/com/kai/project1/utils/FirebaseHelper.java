@@ -119,7 +119,7 @@ public class FirebaseHelper {
                         @Override
                         public void onComplete(@NonNull Task<Void> task) {
                             if(task.isSuccessful()){
-                                DocumentReference dr = db.collection("Project1").document("Users").collection("Users").document(firebaseAuth.getCurrentUser().getUid());
+                                DocumentReference dr = db.collection("project1").document("Users").collection("Users").document(firebaseAuth.getCurrentUser().getUid());
                                 HashMap<String,Object> map = new HashMap<>();
                                 map.put("firstname",firstName);
                                 map.put("lastname",lastName);
@@ -163,7 +163,7 @@ public class FirebaseHelper {
     }
 
     public static void profileUpdate(String password, String firstName, String lastName, String city, String gender, Bitmap bitmapProfile, ProfileListener profileListener){
-        DocumentReference dr = db.collection("Project1").document("Users").collection("Users").document(firebaseAuth.getCurrentUser().getUid());
+        DocumentReference dr = db.collection("project1").document("Users").collection("Users").document(firebaseAuth.getCurrentUser().getUid());
         HashMap<String,Object> map = new HashMap<>();
         map.put("first name",firstName);
         map.put("last name",lastName);
