@@ -78,39 +78,26 @@ tools:context=".ui.profile.ProfileFragment">
 
     <ImageView
         android:id="@+id/imageViewProfile"
+        android:layout_width="222dp"
+        android:layout_height="125dp"
+        android:layout_marginTop="24dp"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.498"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonProfileProfile"
-        android:layout_width="222dp"
-        android:layout_height="125dp"
-        tools:layout_editor_absoluteX="94dp"
-        tools:layout_editor_absoluteY="451dp"
+        app:layout_constraintTop_toBottomOf="@+id/editTextProfileCity"
         tools:src="@tools:sample/avatars" />
 
     <Button
-    android:id="@+id/buttonProfileProfile"
-    android:layout_width="wrap_content"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="16dp"
-    android:text="Profile"
-    android:textAllCaps="false"
-    android:textSize="12sp"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/editTextProfileCity" />
-
-<Button
-    android:id="@+id/buttonProfileSubmit"
-    android:layout_width="match_parent"
-    android:layout_height="wrap_content"
-    android:layout_marginTop="24dp"
-    android:text="Submit"
-    android:textAllCaps="false"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.229"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/imageViewProfile" />
+        android:id="@+id/buttonProfileUpdate"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="24dp"
+        android:text="Update"
+        android:textAllCaps="false"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.229"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/imageViewProfile" />
 
     <Button
         android:id="@+id/buttonProfileCancel"
@@ -122,7 +109,7 @@ tools:context=".ui.profile.ProfileFragment">
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.949"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonProfileSubmit" />
+        app:layout_constraintTop_toBottomOf="@+id/buttonProfileUpdate" />
 
     <EditText
     android:id="@+id/editTextProfileFirstName"

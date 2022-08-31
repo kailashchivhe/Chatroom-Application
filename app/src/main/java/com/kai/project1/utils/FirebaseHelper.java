@@ -182,21 +182,23 @@ public class FirebaseHelper {
         });
     }
 
-    public static Map<String,Object> userDetails(FirebaseUser user){
-        Map<String,Object> details = new HashMap<>();
+    public static String userDetails(FirebaseUser user){
+//        HashMap<String,Object> ans = new HashMap<>();
+        String firstname = null;
         DocumentReference dr = db.collection("Project1").document("Users").collection("Users").document(user.getUid());
         dr.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
-                    DocumentSnapshot ds = task.getResult();
-                     details = ds.getData();
+                    System.out.println("Vidit Sethi" + task.getResult().get("firstname"));
+                    Log.d(TAG, "Firstname: " + task.getResult().get("firstname"));
                 }
                 else{
 
                 }
             }
         });
-        return details;
+        return firstname;
+//        return ans;
     }
 }
