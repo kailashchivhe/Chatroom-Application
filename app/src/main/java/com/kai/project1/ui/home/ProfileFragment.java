@@ -20,6 +20,7 @@ import androidx.core.content.ContextCompat;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -36,12 +37,10 @@ import java.util.HashMap;
 import java.util.Map;
 
 public class ProfileFragment extends Fragment  implements ProfileListener {
-
-
+    
     FragmentProfileBinding binding;
     AlertDialog.Builder builder;
-    Bitmap bitmapProfile = null;
-    private static final int MY_CAMERA_PERMISSION_CODE = 100;
+    final String TAG="Vidit";
 
     public ProfileFragment() {
         // Required empty public constructor
@@ -70,90 +69,24 @@ public class ProfileFragment extends Fragment  implements ProfileListener {
 
             }
         });
-        String ans = FirebaseHelper.userDetails(FirebaseHelper.getUser());
-
-//        binding.editTextProfileEmail.setText((CharSequence) map.get("email"));
-//        binding.editTextProfileCity.setText((CharSequence) map.get("city"));
-//        binding.editTextProfileFirstName.setText((CharSequence) map.get("firstName"));
-//        binding.editTextProfileLastName.setText((CharSequence) map.get("lastName"));
-//        binding.editTextProfilePassword.setText((CharSequence) map.get("password"));
-//        if(map.get("gender").equals("male")){
-//            //check male
-//        }
-//        else{
-//            //check female
-//        }
-        binding.editTextProfileFirstName.setText((CharSequence) ans);
-
         binding.buttonProfileCancel.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onClick(View view) {
+            public void onClick(View v) {
                 onCancelClicked();
             }
         });
-        binding.buttonProfileUpdate.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onUpdateClicked();
-            }
-        });
-        binding.buttonProfileProfile.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View view) {
-                onProfileClicked();
-            }
-        });
 
-    }
-    ActivityResultLauncher<Intent> startForResult = registerForActivityResult(new ActivityResultContracts.StartActivityForResult(), new ActivityResultCallback<ActivityResult>() {
-        @Override
-        public void onActivityResult(ActivityResult result) {
-            if(result.getResultCode() == RESULT_OK)
-            {
-                bitmapProfile = (Bitmap) result.getData().getExtras().get("data");
-                binding.imageViewProfile.setImageBitmap(bitmapProfile);
-            }
-        }
-    });
-
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults)
-    {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        if (requestCode == MY_CAMERA_PERMISSION_CODE)
-        {
-            if (grantResults[0] == PackageManager.PERMISSION_GRANTED)
-            {
-                Toast.makeText(getContext(), "camera permission granted", Toast.LENGTH_LONG).show();
-                Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-                startForResult.launch(cameraIntent);
-            }
-            else
-            {
-                Toast.makeText(getContext(), "camera permission denied", Toast.LENGTH_LONG).show();
-            }
-        }
     }
 
     void onCancelClicked(){
+        Log.d(TAG, "onClick: 1");
         NavHostFragment.findNavController(this).navigate(R.id.action_ProfileFragment_to_HomeFragment);
     }
-    void onProfileClicked(){
-        if (ContextCompat.checkSelfPermission(getContext(), Manifest.permission.CAMERA) != PackageManager.PERMISSION_GRANTED)
-        {
-            requestPermissions(new String[]{Manifest.permission.CAMERA}, MY_CAMERA_PERMISSION_CODE);
-        }
-        else
-        {
-            Intent cameraIntent = new Intent(android.provider.MediaStore.ACTION_IMAGE_CAPTURE);
-            startForResult.launch(cameraIntent);
-        }
-    }
+
     void onUpdateClicked(){
         String userid = FirebaseHelper.getUser().getUid();
         String firstName = binding.editTextProfileFirstName.getText().toString();
         String lastName = binding.editTextProfileLastName.getText().toString();
-        String email = binding.editTextProfileEmail.getText().toString();
-        String password = binding.editTextProfilePassword.getText().toString();
         String city = binding.editTextProfileCity.getText().toString();
         int genderID = binding.RadioGroupProfileGender.getCheckedRadioButtonId();
         String gender = null;
@@ -163,9 +96,9 @@ public class ProfileFragment extends Fragment  implements ProfileListener {
         else{
             gender = "female";
         }
-        if(!password.isEmpty() && !firstName.isEmpty() && !lastName.isEmpty() && !gender.isEmpty() && !city.isEmpty() && !bitmapProfile.equals(null)){
-            User user = new User(firstName,lastName,userid,gender,city,email,password);
-            FirebaseHelper.profileUpdate(password,firstName,lastName,city,gender,bitmapProfile,this);
+        if(!firstName.isEmpty() && !lastName.isEmpty() && !city.isEmpty()){
+            User user = new User(firstName,lastName,gender,city,userid);
+            FirebaseHelper.profileUpdate(user,this);
         }
         else{
             builder.setMessage("Please enter Data");

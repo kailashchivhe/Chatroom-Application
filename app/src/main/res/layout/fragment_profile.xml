@@ -6,68 +6,38 @@ android:layout_width="match_parent"
 android:layout_height="match_parent"
 tools:context=".ui.profile.ProfileFragment">
 
-    <EditText
-        android:id="@+id/editTextProfileEmail"
+    <RadioGroup
+        android:id="@+id/RadioGroupProfileGender"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="8dp"
-        android:editable="false"
-        android:ems="10"
-        android:hint="Enter Email"
-        android:inputType="textEmailAddress"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="16dp"
         app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.0"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextProfileLastName" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextProfileLastName">
 
-<EditText
-    android:id="@+id/editTextProfilePassword"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="16dp"
-    android:layout_marginEnd="8dp"
-    android:ems="10"
-    android:hint="Enter Password"
-    android:inputType="textPassword"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="1.0"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/editTextProfileEmail" />
+        <RadioButton
+            android:id="@+id/radioButtonProfileMale"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Male" />
 
-<RadioGroup
-    android:id="@+id/RadioGroupProfileGender"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="16dp"
-    android:layout_marginTop="16dp"
-    android:layout_marginEnd="16dp"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintHorizontal_bias="0.0"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/editTextProfilePassword">
+        <RadioButton
+            android:id="@+id/radioButtonProfileFemale"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:text="Female" />
 
-    <RadioButton
-        android:id="@+id/radioButtonProfileMale"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Male" />
-
-    <RadioButton
-        android:id="@+id/radioButtonProfileFemale"
-        android:layout_width="match_parent"
-        android:layout_height="wrap_content"
-        android:text="Female" />
-
-</RadioGroup>
+    </RadioGroup>
 
     <EditText
         android:id="@+id/editTextProfileCity"
         android:layout_width="0dp"
         android:layout_height="wrap_content"
         android:layout_marginStart="8dp"
-        android:layout_marginTop="16dp"
+        android:layout_marginTop="24dp"
         android:layout_marginEnd="8dp"
         android:ems="10"
         android:hint="Enter City"
@@ -76,33 +46,26 @@ tools:context=".ui.profile.ProfileFragment">
         app:layout_constraintStart_toStartOf="parent"
         app:layout_constraintTop_toBottomOf="@+id/RadioGroupProfileGender" />
 
-    <ImageView
-        android:id="@+id/imageViewProfile"
-        android:layout_width="222dp"
-        android:layout_height="125dp"
-        android:layout_marginTop="8dp"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.497"
-        app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/buttonProfileProfile"
-        tools:src="@tools:sample/avatars" />
-
     <Button
         android:id="@+id/buttonProfileUpdate"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:layout_marginTop="24dp"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
         android:text="Update"
         android:textAllCaps="false"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintHorizontal_bias="0.229"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/imageViewProfile" />
+        app:layout_constraintTop_toBottomOf="@+id/editTextProfileCity" />
 
     <Button
         android:id="@+id/buttonProfileCancel"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginEnd="8dp"
         android:text="Cancel"
         android:textAllCaps="false"
         android:textSize="12sp"
@@ -112,41 +75,31 @@ tools:context=".ui.profile.ProfileFragment">
         app:layout_constraintTop_toBottomOf="@+id/buttonProfileUpdate" />
 
     <EditText
-    android:id="@+id/editTextProfileFirstName"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="24dp"
-    android:layout_marginEnd="8dp"
-    android:ems="10"
-    android:hint="Enter First Name"
-    android:inputType="textPersonName"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toTopOf="parent" />
-
-<EditText
-    android:id="@+id/editTextProfileLastName"
-    android:layout_width="0dp"
-    android:layout_height="wrap_content"
-    android:layout_marginStart="8dp"
-    android:layout_marginTop="16dp"
-    android:layout_marginEnd="8dp"
-    android:ems="10"
-    android:hint="Enter Last Name"
-    android:inputType="textPersonName"
-    app:layout_constraintEnd_toEndOf="parent"
-    app:layout_constraintStart_toStartOf="parent"
-    app:layout_constraintTop_toBottomOf="@+id/editTextProfileFirstName" />
-
-    <Button
-        android:id="@+id/buttonProfileProfile"
-        android:layout_width="wrap_content"
+        android:id="@+id/editTextProfileFirstName"
+        android:layout_width="0dp"
         android:layout_height="wrap_content"
-        android:layout_marginTop="8dp"
-        android:text="Profile"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="32dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:hint="Enter First Name"
+        android:inputType="textPersonName"
         app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintStart_toStartOf="parent"
-        app:layout_constraintTop_toBottomOf="@+id/editTextProfileCity" />
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <EditText
+        android:id="@+id/editTextProfileLastName"
+        android:layout_width="0dp"
+        android:layout_height="wrap_content"
+        android:layout_marginStart="8dp"
+        android:layout_marginTop="24dp"
+        android:layout_marginEnd="8dp"
+        android:ems="10"
+        android:hint="Enter Last Name"
+        android:inputType="textPersonName"
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toBottomOf="@+id/editTextProfileFirstName" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>

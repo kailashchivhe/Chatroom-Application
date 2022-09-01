@@ -80,7 +80,7 @@ public class FirebaseHelper {
                             public void onSuccess(Uri uri) {
                                 HashMap<String,Object> map = new HashMap<>();
                                 map.put("uri",uri.toString());
-                                db.collection("Project1").document("Users").collection("Users").document(firebaseAuth.getCurrentUser().getUid()).update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
+                                db.collection("project1").document("Users").collection("Users").document(firebaseAuth.getCurrentUser().getUid()).update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
                                     @Override
                                     public void onComplete(@NonNull Task<Void> task) {
                                         Log.d(TAG, "onSuccess: uploaded");
@@ -162,13 +162,13 @@ public class FirebaseHelper {
         firebaseAuth.signOut();
     }
 
-    public static void profileUpdate(String password, String firstName, String lastName, String city, String gender, Bitmap bitmapProfile, ProfileListener profileListener){
+    public static void profileUpdate(User user, ProfileListener profileListener){
         DocumentReference dr = db.collection("project1").document("Users").collection("Users").document(firebaseAuth.getCurrentUser().getUid());
         HashMap<String,Object> map = new HashMap<>();
-        map.put("first name",firstName);
-        map.put("last name",lastName);
-        map.put("city",city);
-        map.put("gender",gender);
+        map.put("firstname", user.getFirstname());
+        map.put("lastname", user.getLastname());
+        map.put("gender",user.getGender());
+        map.put("city" , user.getCity());
         dr.update(map).addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
