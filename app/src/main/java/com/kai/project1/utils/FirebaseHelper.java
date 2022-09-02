@@ -26,6 +26,7 @@ import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
 import com.kai.project1.listener.LoginListener;
 import com.kai.project1.listener.ProfileListener;
+import com.kai.project1.listener.ProfileRetrieveListener;
 import com.kai.project1.listener.RegisterListener;
 
 import java.io.ByteArrayOutputStream;
@@ -163,7 +164,7 @@ public class FirebaseHelper {
     }
 
     public static void profileUpdate(User user, ProfileListener profileListener){
-        DocumentReference dr = db.collection("project1").document("Users").collection("Users").document(firebaseAuth.getCurrentUser().getUid());
+        DocumentReference dr = db.collection("project1").document("Users").collection("Users").document(user.getUserid());
         HashMap<String,Object> map = new HashMap<>();
         map.put("firstname", user.getFirstname());
         map.put("lastname", user.getLastname());
@@ -182,23 +183,25 @@ public class FirebaseHelper {
         });
     }
 
-    public static String userDetails(FirebaseUser user){
-//        HashMap<String,Object> ans = new HashMap<>();
-        String firstname = null;
-        DocumentReference dr = db.collection("Project1").document("Users").collection("Users").document(user.getUid());
+    public static void userDetails(ProfileRetrieveListener profileRetrieveListener){
+
+        DocumentReference dr = db.collection("project1").document("Users").collection("Users").document(getUser().getUid());
         dr.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
-                    System.out.println("Vidit Sethi" + task.getResult().get("firstname"));
-                    Log.d(TAG, "Firstname: " + task.getResult().get("firstname"));
+                    DocumentSnapshot ds = task.getResult();
+                    String firstname = ds.get("firstname").toString();
+                    String lastname = ds.get("lastname").toString();
+                    String city = ds.get("city").toString();
+                    String gender = ds.get("gender").toString();
+                    profileRetrieveListener.onSuccess(new User(firstname,lastname,gender,city,FirebaseHelper.getUser().getUid()));
                 }
                 else{
-
+                    profileRetrieveListener.onFail(task.getException().getMessage());
                 }
             }
         });
-        return firstname;
-//        return ans;
+
     }
 }
