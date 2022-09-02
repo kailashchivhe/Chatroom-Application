@@ -47,6 +47,9 @@ public class LoginFragment extends Fragment implements LoginListener {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        if(FirebaseHelper.getUser()!=null){
+            NavHostFragment.findNavController(this).navigate(R.id.action_LoginFragment_to_HomeFragment);
+        }
         getActivity().setTitle("Login");
 
         builder = new AlertDialog.Builder(getActivity());

@@ -55,11 +55,15 @@ public class HomeFragment extends Fragment {
         binding.button2.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                FirebaseHelper.logout();
+                onLogoutClicked();
             }
         });
     }
     void onProfileClicked(){
         NavHostFragment.findNavController(this).navigate(R.id.action_HomeFragment_to_profileFragment);
+    }
+    void onLogoutClicked(){
+        FirebaseHelper.logout();
+        NavHostFragment.findNavController(this).navigate(R.id.action_HomeFragment_to_loginFragment);
     }
 }

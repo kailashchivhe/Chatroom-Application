@@ -24,10 +24,12 @@
         android:label="@string/home_fragment_label"
         tools:layout="@layout/fragment_home">
 
-
+        <action
+            android:id="@+id/action_HomeFragment_to_loginFragment"
+            app:destination="@id/LoginFragment" />
         <action
             android:id="@+id/action_HomeFragment_to_profileFragment"
-            app:destination="@id/profileFragment" />
+            app:destination="@id/ProfileFragment" />
     </fragment>
 
     <fragment
@@ -40,11 +42,12 @@
             android:id="@+id/action_RegistrationFragment_to_LoginFragment"
             app:destination="@id/LoginFragment" />
     </fragment>
+
     <fragment
-        android:id="@+id/profileFragment"
+        android:id="@+id/ProfileFragment"
         android:name="com.kai.project1.ui.profile.ProfileFragment"
-        android:label="fragment_profile"
-        tools:layout="@layout/fragment_profile" >
+        android:label="@string/profile_fragment_label"
+        tools:layout="@layout/fragment_profile">
 
         <action
             android:id="@+id/action_ProfileFragment_to_HomeFragment"
