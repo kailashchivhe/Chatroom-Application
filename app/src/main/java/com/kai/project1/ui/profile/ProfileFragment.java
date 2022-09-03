@@ -18,7 +18,7 @@ import com.kai.project1.databinding.FragmentProfileBinding;
 import com.kai.project1.listener.ProfileListener;
 import com.kai.project1.listener.ProfileRetrieveListener;
 import com.kai.project1.utils.FirebaseHelper;
-import com.kai.project1.utils.User;
+import com.kai.project1.model.User;
 
 public class ProfileFragment extends Fragment implements ProfileListener, ProfileRetrieveListener {
 

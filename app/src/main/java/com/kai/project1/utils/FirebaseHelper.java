@@ -1,13 +1,10 @@
 package com.kai.project1.utils;
 
-import android.content.Intent;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
-import android.widget.Toast;
 
 import androidx.annotation.NonNull;
-import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -19,7 +16,11 @@ import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.QueryDocumentSnapshot;
+import com.google.firebase.firestore.QuerySnapshot;
+import com.google.firebase.firestore.SetOptions;
 import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
@@ -28,13 +29,12 @@ import com.kai.project1.listener.LoginListener;
 import com.kai.project1.listener.ProfileListener;
 import com.kai.project1.listener.ProfileRetrieveListener;
 import com.kai.project1.listener.RegisterListener;
+import com.kai.project1.model.User;
 
 import java.io.ByteArrayOutputStream;
-import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.Set;
+import java.util.Objects;
 
 public class FirebaseHelper {
     static FirebaseAuth firebaseAuth;
@@ -204,4 +204,105 @@ public class FirebaseHelper {
         });
 
     }
+
+    public static void getAllChatRooms(){
+        DocumentReference dr = db.collection("project1").document("chatrooms");
+        dr.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot ds = task.getResult();
+
+
+                }
+                else{
+
+                }
+            }
+        });
+    }
+
+    public static void postMessage(String chatRoomId){
+        Map<String, Object> chat = new HashMap<String, Object>();
+//        chat.put("date", forum.getDate());
+//        chat.put("subTitle", forum.getSubTitle() );
+//        chat.put("title", forum.getTitle() );
+//        chat.put("userId", forum.getUserId() );
+//        chat.put("userName", forum.getUserName() );
+        chat.put( "likes", new HashMap<String,Boolean>() );
+        firebaseFirestore.collection("project1/chatrooms/"+chatRoomId)
+                .add(chat)
+                .addOnSuccessListener(documentReference -> {
+
+                })
+                .addOnFailureListener(e -> {
+
+                });
+    }
+
+    public static void createChatRoom(String name){
+        Map<String, Object> chat = new HashMap<String, Object>();
+        chat.put("chats", firebaseFirestore.collection("messages"));
+        chat.put("info", firebaseFirestore.document("name").set(name));
+//        chat.put("online", );
+//        chat.put("date", forum.getDate());
+//        chat.put("subTitle", forum.getSubTitle() );
+//        chat.put("title", forum.getTitle() );
+//        chat.put("userId", forum.getUserId() );
+//        chat.put("userName", forum.getUserName() );
+        chat.put( "likes", new HashMap<String,Boolean>() );
+        firebaseFirestore.collection("project1/chatrooms/")
+                .add(chat)
+                .addOnSuccessListener(documentReference -> {
+
+                })
+                .addOnFailureListener(e -> {
+
+                });
+    }
+
+    public static void likeMessage(String messageId, String chatId, boolean isLiked){
+        if( isLiked ){
+            firebaseFirestore.collection("project1/chatrooms/"+chatId+"/chats/messages"+messageId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                        Map<String, Object> deleteData = new HashMap<>();
+                        deleteData.put("likes."+getUser().getUid(), FieldValue.delete());
+                        firebaseFirestore.collection("project1/chatrooms/"+chatId+"/chats/messages"+messageId).document(document.getId()).update(deleteData);
+                    }
+                }
+            });
+        }
+        else{
+            firebaseFirestore.collection("project1/chatrooms/"+chatId+"/chats/messages"+messageId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                @Override
+                public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                    if( task.isSuccessful() ){
+                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+                            Map<String, Boolean> likes = new HashMap<>();
+                            Map<String, Object> map = new HashMap<>();
+                            likes.put(getUser().getUid(), true);
+                            map.put("likes", likes );
+                            firebaseFirestore.collection("project1/chatrooms/"+chatId+"/chats/messages"+messageId).document(document.getId()).set( map, SetOptions.merge() );
+                        }
+                    }
+                }
+            });
+        }
+    }
+
+    public static void getOnlineUsers(String chatRoomId){
+        firebaseFirestore.collection("project1/chatrooms/"+chatRoomId+"/online/users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if( task.isSuccessful() ){
+                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+
+                    }
+                }
+            }
+        });
+    }
+
 }

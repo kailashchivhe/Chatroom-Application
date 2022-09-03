@@ -1,4 +1,4 @@
-package com.kai.project1.utils;
+package com.kai.project1.model;
 
 import android.graphics.Bitmap;
 
