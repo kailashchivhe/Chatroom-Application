@@ -2,15 +2,23 @@ package com.kai.project1.ui.chat;
 
 import android.os.Bundle;
 
+import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
 
 import com.kai.project1.R;
+import com.kai.project1.adapter.ChatAdapter;
+import com.kai.project1.adapter.OnlineUsersAdapter;
+import com.kai.project1.databinding.FragmentChatRoomBinding;
+import com.kai.project1.databinding.FragmentHomeBinding;
 
 public class ChatRoomFragment extends Fragment {
+
+    FragmentChatRoomBinding binding;
     private String mParam1;
     private String mParam2;
 
@@ -36,6 +44,18 @@ public class ChatRoomFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         // Inflate the layout for this fragment
-        return inflater.inflate(R.layout.fragment_chat_room, container, false);
+        binding = FragmentChatRoomBinding.inflate(inflater,container,false);
+        return binding.getRoot();
+    }
+
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        binding.recyclerViewOnline.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+        binding.recyclerViewOnline.setAdapter(new OnlineUsersAdapter());
+
+        binding.recyclerViewMessages.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.recyclerViewMessages.setAdapter(new ChatAdapter());
+
     }
 }

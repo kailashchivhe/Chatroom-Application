@@ -8,6 +8,8 @@ import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
+import androidx.recyclerview.widget.LinearLayoutManager;
+import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -19,6 +21,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.kai.project1.R;
+import com.kai.project1.adapter.ChatRoomsAdapter;
 import com.kai.project1.databinding.FragmentHomeBinding;
 import com.kai.project1.utils.FirebaseHelper;
 
@@ -78,9 +81,17 @@ public class HomeFragment extends Fragment {
         return binding.getRoot();
     }
 
+    @Override
+    public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+        super.onActivityCreated(savedInstanceState);
+        binding.chatRoomsList.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.chatRoomsList.setAdapter(new ChatRoomsAdapter());
+    }
+
     private void onProfileClicked(){
         NavHostFragment.findNavController(this).navigate(R.id.action_HomeFragment_to_profileFragment);
     }
+
 
     private void onLogoutClicked(){
         FirebaseHelper.logout();
@@ -112,5 +123,6 @@ public class HomeFragment extends Fragment {
 
         builder.show();
     }
+
 
 }
