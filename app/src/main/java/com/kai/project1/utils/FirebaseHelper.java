@@ -1,5 +1,6 @@
 package com.kai.project1.utils;
 
+import android.annotation.SuppressLint;
 import android.graphics.Bitmap;
 import android.net.Uri;
 import android.util.Log;
@@ -14,6 +15,7 @@ import com.google.firebase.auth.AuthResult;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.auth.UserProfileChangeRequest;
+import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
 import com.google.firebase.firestore.FieldValue;
@@ -32,9 +34,12 @@ import com.kai.project1.listener.RegisterListener;
 import com.kai.project1.model.User;
 
 import java.io.ByteArrayOutputStream;
+import java.text.SimpleDateFormat;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
+import java.util.UUID;
 
 public class FirebaseHelper {
     static FirebaseAuth firebaseAuth;
@@ -184,7 +189,6 @@ public class FirebaseHelper {
     }
 
     public static void userDetails(ProfileRetrieveListener profileRetrieveListener){
-
         DocumentReference dr = db.collection("project1").document("Users").collection("Users").document(getUser().getUid());
         dr.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -206,32 +210,27 @@ public class FirebaseHelper {
     }
 
     public static void getAllChatRooms(){
-        DocumentReference dr = db.collection("project1").document("chatrooms");
-        dr.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        CollectionReference dr = db.collection("chatrooms");
+        dr.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    DocumentSnapshot ds = task.getResult();
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
 
-
-                }
-                else{
-
-                }
             }
         });
     }
 
     public static void postMessage(String chatRoomId){
-        Map<String, Object> chat = new HashMap<String, Object>();
-//        chat.put("date", forum.getDate());
-//        chat.put("subTitle", forum.getSubTitle() );
-//        chat.put("title", forum.getTitle() );
-//        chat.put("userId", forum.getUserId() );
-//        chat.put("userName", forum.getUserName() );
-        chat.put( "likes", new HashMap<String,Boolean>() );
-        firebaseFirestore.collection("project1/chatrooms/"+chatRoomId)
-                .add(chat)
+        chatRoomId = "THQV0n7mQyAFH97zbARd";
+        Map<String, Object> messageMap = new HashMap<String, Object>();
+        messageMap.put( "likes", new HashMap<String,Boolean>() );
+        messageMap.put("message", "Hi");
+        messageMap.put("userId", firebaseAuth.getUid());
+        @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
+        Date date = new Date();
+        messageMap.put("date", formatter.format(date) );
+
+        firebaseFirestore.collection("chatrooms").document(chatRoomId).collection("messages")
+                .add(messageMap)
                 .addOnSuccessListener(documentReference -> {
 
                 })
@@ -242,23 +241,11 @@ public class FirebaseHelper {
 
     public static void createChatRoom(String name){
         Map<String, Object> chat = new HashMap<String, Object>();
-        chat.put("chats", firebaseFirestore.collection("messages"));
-        chat.put("info", firebaseFirestore.document("name").set(name));
-//        chat.put("online", );
-//        chat.put("date", forum.getDate());
-//        chat.put("subTitle", forum.getSubTitle() );
-//        chat.put("title", forum.getTitle() );
-//        chat.put("userId", forum.getUserId() );
-//        chat.put("userName", forum.getUserName() );
-        chat.put( "likes", new HashMap<String,Boolean>() );
-        firebaseFirestore.collection("project1/chatrooms/")
-                .add(chat)
-                .addOnSuccessListener(documentReference -> {
-
-                })
-                .addOnFailureListener(e -> {
-
-                });
+        chat.put("name", name);
+        Map<String, Boolean> onlineUsers = new HashMap<String, Boolean>();
+        onlineUsers.put(firebaseAuth.getUid(), true );
+        chat.put("online", onlineUsers);
+        firebaseFirestore.collection("chatrooms").add(chat);
     }
 
     public static void likeMessage(String messageId, String chatId, boolean isLiked){
@@ -293,6 +280,32 @@ public class FirebaseHelper {
     }
 
     public static void getOnlineUsers(String chatRoomId){
+        firebaseFirestore.collection("project1/chatrooms/"+chatRoomId+"/online/users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if( task.isSuccessful() ){
+                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+
+                    }
+                }
+            }
+        });
+    }
+
+    public static void addOnlineUser(String chatRoomId){
+        firebaseFirestore.collection("project1/chatrooms/"+chatRoomId+"/online/users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task) {
+                if( task.isSuccessful() ){
+                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
+
+                    }
+                }
+            }
+        });
+    }
+
+    public static void removeOnlineUser(String chatRoomId){
         firebaseFirestore.collection("project1/chatrooms/"+chatRoomId+"/online/users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
