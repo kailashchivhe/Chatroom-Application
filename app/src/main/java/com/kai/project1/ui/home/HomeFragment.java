@@ -21,11 +21,18 @@ import android.widget.EditText;
 
 import com.kai.project1.R;
 import com.kai.project1.databinding.FragmentHomeBinding;
+import com.kai.project1.listener.GetAllChatRoomsListener;
+import com.kai.project1.model.ChatRoom;
 import com.kai.project1.utils.FirebaseHelper;
 
-public class HomeFragment extends Fragment {
+import java.util.ArrayList;
+import java.util.List;
+
+public class HomeFragment extends Fragment implements GetAllChatRoomsListener {
 
     FragmentHomeBinding binding;
+    AlertDialog.Builder builder;
+    List<ChatRoom> chatRoomsList;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -61,7 +68,7 @@ public class HomeFragment extends Fragment {
             return true;
         }
         else if (id == R.id.action_new_chat) {
-            FirebaseHelper.getAllChatRooms();
+            FirebaseHelper.getAllChatRooms(this);
 //            createRoom();
             return true;
         }
@@ -83,7 +90,15 @@ public class HomeFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-//        List<ChatRooms> chatRoomsList = FirebaseHelper.getAllChatRooms();
+        builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Alert!");
+        builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        FirebaseHelper.getAllChatRooms(this);
         binding.chatRoomsList.setLayoutManager(new LinearLayoutManager(getContext()));
 //        binding.chatRoomsList.setAdapter(new ChatRoomsAdapter(chatRoomsList));
     }
@@ -125,4 +140,15 @@ public class HomeFragment extends Fragment {
     }
 
 
+    @Override
+    public void allChatRooms(ArrayList<ChatRoom> chatRoomArrayList) {
+        chatRoomsList = chatRoomArrayList;
+    }
+
+    @Override
+    public void allChatRoomsFailure(String message) {
+        builder.setMessage(message);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
 }

@@ -32,7 +32,18 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull ChatHolder holder, int position) {
-
+        Message message = messageList.get(position);
+        holder.message.setText(message.getMessage());
+//        holder.userImage.setImageBitmap();
+        holder.name.setText(message.getUserName());
+        holder.time.setText(message.getDate());
+        holder.view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Do like or Unlike
+            }
+        });
+        //Delete Part Left
     }
 
     @Override

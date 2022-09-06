@@ -10,14 +10,15 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kai.project1.R;
+import com.kai.project1.model.OnlineUsers;
 
 import java.util.List;
 
 public class OnlineUsersAdapter extends RecyclerView.Adapter<OnlineUsersHolder>{
 
-    List<String> onlineUserList;
+    List<OnlineUsers> onlineUserList;
 
-    public OnlineUsersAdapter(List<String> onlineUserList) {
+    public OnlineUsersAdapter(List<OnlineUsers> onlineUserList) {
         this.onlineUserList = onlineUserList;
     }
 
@@ -31,6 +32,7 @@ public class OnlineUsersAdapter extends RecyclerView.Adapter<OnlineUsersHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull OnlineUsersHolder holder, int position) {
+//        OnlineUsers onlineUser =
 //        OnlineUser onlineUser = onlineUserList.get(position);
 //        holder.textView.setText(onlineUser.getName());
 //        holder.imageView.setImageBitmap(onlineUser.getImageUrl());

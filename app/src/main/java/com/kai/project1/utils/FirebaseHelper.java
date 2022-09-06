@@ -27,6 +27,8 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.kai.project1.listener.GetAllChatRoomsListener;
+import com.kai.project1.listener.GetOnlineUsersListener;
 import com.kai.project1.listener.LoginListener;
 import com.kai.project1.listener.ProfileListener;
 import com.kai.project1.listener.ProfileRetrieveListener;
@@ -212,7 +214,7 @@ public class FirebaseHelper {
 
     }
 
-    public static void getAllChatRooms(){
+    public static void getAllChatRooms(GetAllChatRoomsListener getAllChatRoomsListener){
         ArrayList<ChatRoom> chatRoomArrayList = new ArrayList<>();
         CollectionReference dr = db.collection("chatrooms");
         dr.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -242,9 +244,11 @@ public class FirebaseHelper {
                                     chatRoom.setMessages(messageArrayList);
                                     //TODO add success listener
                                     chatRoomArrayList.add(chatRoom);
+                                    getAllChatRoomsListener.allChatRooms(chatRoomArrayList);
                                 }
                                 else{
                                     //TODO add failure listener
+                                    getAllChatRoomsListener.allChatRoomsFailure(task1.getException().getMessage());
                                 }
                             }
                         });
@@ -252,6 +256,7 @@ public class FirebaseHelper {
                 }
                 else{
                     //TODO add failure listener
+                    getAllChatRoomsListener.allChatRoomsFailure(task.getException().getMessage());
                 }
             }
         });
@@ -341,7 +346,7 @@ public class FirebaseHelper {
         }
     }
 
-    public static void getOnlineUsers(String chatRoomId){
+    public static void getOnlineUsers(String chatRoomId, GetOnlineUsersListener getOnlineUsersListener){
         ArrayList<OnlineUsers> onlineUsers = new ArrayList<>();
         firebaseFirestore.collection("chatrooms").document(chatRoomId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -355,9 +360,11 @@ public class FirebaseHelper {
                         onlineUsers.add(onlineUsers1);
                     }
                     //TODO success listener
+                    getOnlineUsersListener.allOnlineUsers(onlineUsers);
                 }
                 else{
                     //TODO failure listener
+                    getOnlineUsersListener.allOnlineUsersFailure(task.getException().getMessage());
                 }
             }
         });

@@ -30,6 +30,9 @@
         <action
             android:id="@+id/action_HomeFragment_to_profileFragment"
             app:destination="@id/ProfileFragment" />
+        <action
+            android:id="@+id/action_HomeFragment_to_chat_roomFragment"
+            app:destination="@id/ChatRoomFragment" />
     </fragment>
 
     <fragment
@@ -52,6 +55,13 @@
         <action
             android:id="@+id/action_ProfileFragment_to_HomeFragment"
             app:destination="@id/HomeFragment" />
+    </fragment>
+
+    <fragment
+        android:id="@+id/ChatRoomFragment"
+        android:name="com.kai.project1.ui.profile.ProfileFragment"
+        android:label="@string/chat_room_fragment_label"
+        tools:layout="@layout/fragment_chat_room">
     </fragment>
 
 </navigation>

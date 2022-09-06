@@ -1,5 +1,7 @@
 package com.kai.project1.ui.chat;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.os.Bundle;
 
 import androidx.annotation.Nullable;
@@ -15,22 +17,29 @@ import com.kai.project1.adapter.ChatAdapter;
 import com.kai.project1.adapter.OnlineUsersAdapter;
 import com.kai.project1.databinding.FragmentChatRoomBinding;
 import com.kai.project1.databinding.FragmentHomeBinding;
+import com.kai.project1.listener.GetAllMessagesListener;
+import com.kai.project1.listener.GetOnlineUsersListener;
 import com.kai.project1.model.Message;
+import com.kai.project1.model.OnlineUsers;
 import com.kai.project1.utils.FirebaseHelper;
 
+import java.util.ArrayList;
 import java.util.List;
 
-public class ChatRoomFragment extends Fragment {
+public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener, GetAllMessagesListener {
 
     FragmentChatRoomBinding binding;
-    private String mParam1;
-    private String mParam2;
+    List<Message> messageList;
+    List<OnlineUsers> onlineUserList;
+    AlertDialog.Builder builder;
+
+    private String mChatRoomID;
 
     public ChatRoomFragment() {
         // Required empty public constructor
     }
 
-    public static ChatRoomFragment newInstance(String param1, String param2) {
+    public static ChatRoomFragment newInstance(String param1) {
         ChatRoomFragment fragment = new ChatRoomFragment();
         Bundle args = new Bundle();
         fragment.setArguments(args);
@@ -55,15 +64,47 @@ public class ChatRoomFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Alert!");
+        builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
 
-        String chatRoomId = null;
-//        List<OnlineUser> onlineUserList = FirebaseHelper.getOnlineUsers(chatRoomId);
-//        List<Message> messagesList = FirebaseHelper.getAllChatRoomMessage(chatRoomId);
-//        binding.recyclerViewOnline.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
-//        binding.recyclerViewOnline.setAdapter(new OnlineUsersAdapter(onlineUserList));
-//
-//        binding.recyclerViewMessages.setLayoutManager(new LinearLayoutManager(getContext()));
-//        binding.recyclerViewMessages.setAdapter(new ChatAdapter(messagesList));
+            }
+        });
+        FirebaseHelper.getOnlineUsers(mChatRoomID,this);
+//        FirebaseHelper.getAllMessages(mChatRoomID,this);
 
+
+        binding.recyclerViewOnline.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+        binding.recyclerViewOnline.setAdapter(new OnlineUsersAdapter(onlineUserList));
+
+        binding.recyclerViewMessages.setLayoutManager(new LinearLayoutManager(getContext()));
+        binding.recyclerViewMessages.setAdapter(new ChatAdapter(messageList));
+
+    }
+
+    @Override
+    public void allOnlineUsers(ArrayList<OnlineUsers> onlineUsers) {
+        onlineUserList = onlineUsers;
+    }
+
+    @Override
+    public void allOnlineUsersFailure(String message) {
+        builder.setMessage(message);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    @Override
+    public void allMessages(ArrayList<Message> messages) {
+        messageList = messages;
+    }
+
+    @Override
+    public void allMessagesFailure(String message) {
+        builder.setMessage(message);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }

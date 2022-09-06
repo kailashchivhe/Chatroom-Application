@@ -6,18 +6,20 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kai.project1.R;
+import com.kai.project1.model.ChatRoom;
 
 import java.util.List;
 
 public class ChatRoomsAdapter extends RecyclerView.Adapter<ChatRoomsHolder>{
 
-    List<ChatRooms> chatRoomsList;
+    List<ChatRoom> chatRoomList;
 
-    public ChatRoomsAdapter(List<ChatRooms> chatRoomsList) {
-        this.chatRoomsList = chatRoomsList;
+    public ChatRoomsAdapter(List<ChatRoom> chatRoomsList) {
+        this.chatRoomList = chatRoomList;
     }
 
     @NonNull
@@ -30,12 +32,21 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<ChatRoomsHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull ChatRoomsHolder holder, int position) {
+        ChatRoom chatRoom = chatRoomList.get(position);
+        holder.chatRoomName.setText(chatRoom.getName());
 
+        holder.view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+//                chatRoom.getChatId();
+                //NavHostFragment.findNavController(this).navigate(R.id.action_HomeFragment_to_chat_roomFragment);
+            }
+        });
     }
 
     @Override
     public int getItemCount() {
-        return chatRoomsList.size();
+        return chatRoomList.size();
     }
 }
 class ChatRoomsHolder extends RecyclerView.ViewHolder{
