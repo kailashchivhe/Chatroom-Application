@@ -9,7 +9,6 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kai.project1.R;
-import com.kai.project1.model.ChatRooms;
 
 import java.util.List;
 

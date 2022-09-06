@@ -1,19 +1,29 @@
 package com.kai.project1.model;
 
+import java.io.Serializable;
 import java.util.Map;
 
-public class Message {
-    Map<String, Boolean> likesMap;
+public class Message implements Serializable {
+    Map<String, Boolean> likes;
     String message;
     String date;
     String userId;
+    String userName;
 
-    public Map<String, Boolean> getLikesMap() {
-        return likesMap;
+    public Map<String, Boolean> getLikes() {
+        return likes;
     }
 
-    public void setLikesMap(Map<String, Boolean> likesMap) {
-        this.likesMap = likesMap;
+    public void setLikes(Map<String, Boolean> likes) {
+        this.likes = likes;
+    }
+
+    public String getUserName() {
+        return userName;
+    }
+
+    public void setUserName(String userName) {
+        this.userName = userName;
     }
 
     public String getMessage() {
@@ -38,5 +48,15 @@ public class Message {
 
     public void setUserId(String userId) {
         this.userId = userId;
+    }
+
+    @Override
+    public String toString() {
+        return "Message{" +
+                "likes=" + likes +
+                ", message='" + message + '\'' +
+                ", date='" + date + '\'' +
+                ", userId='" + userId + '\'' +
+                '}';
     }
 }

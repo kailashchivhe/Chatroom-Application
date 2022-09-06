@@ -16,7 +16,6 @@ import com.kai.project1.adapter.OnlineUsersAdapter;
 import com.kai.project1.databinding.FragmentChatRoomBinding;
 import com.kai.project1.databinding.FragmentHomeBinding;
 import com.kai.project1.model.Message;
-import com.kai.project1.model.OnlineUser;
 import com.kai.project1.utils.FirebaseHelper;
 
 import java.util.List;
@@ -58,13 +57,13 @@ public class ChatRoomFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         String chatRoomId = null;
-        List<OnlineUser> onlineUserList = FirebaseHelper.getOnlineUsers(chatRoomId);
-        List<Message> messagesList = FirebaseHelper.getAllChatRoomMessage(chatRoomId);
-        binding.recyclerViewOnline.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
-        binding.recyclerViewOnline.setAdapter(new OnlineUsersAdapter(onlineUserList));
-
-        binding.recyclerViewMessages.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.recyclerViewMessages.setAdapter(new ChatAdapter(messagesList));
+//        List<OnlineUser> onlineUserList = FirebaseHelper.getOnlineUsers(chatRoomId);
+//        List<Message> messagesList = FirebaseHelper.getAllChatRoomMessage(chatRoomId);
+//        binding.recyclerViewOnline.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
+//        binding.recyclerViewOnline.setAdapter(new OnlineUsersAdapter(onlineUserList));
+//
+//        binding.recyclerViewMessages.setLayoutManager(new LinearLayoutManager(getContext()));
+//        binding.recyclerViewMessages.setAdapter(new ChatAdapter(messagesList));
 
     }
 }

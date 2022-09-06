@@ -1,33 +1,53 @@
 package com.kai.project1.model;
 
+import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.HashMap;
 
-public class ChatRoom {
-    ArrayList<Message> messageArrayList;
-    String info;
-    ArrayList<OnlineUser> userArrayList;
+public class ChatRoom implements Serializable {
+    ArrayList<Message> messages;
+    String name;
+    HashMap<String, String> online;
+    String chatId;
 
-    public ArrayList<OnlineUser> getUserArrayList() {
-        return userArrayList;
+    public String getChatId() {
+        return chatId;
     }
 
-    public void setUserArrayList(ArrayList<OnlineUser> userArrayList) {
-        this.userArrayList = userArrayList;
+    public void setChatId(String chatId) {
+        this.chatId = chatId;
     }
 
-    public ArrayList<Message> getMessageArrayList() {
-        return messageArrayList;
+    public ArrayList<Message> getMessages() {
+        return messages;
     }
 
-    public void setMessageArrayList(ArrayList<Message> messageArrayList) {
-        this.messageArrayList = messageArrayList;
+    public void setMessages(ArrayList<Message> messages) {
+        this.messages = messages;
     }
 
-    public String getInfo() {
-        return info;
+    public String getName() {
+        return name;
     }
 
-    public void setInfo(String info) {
-        this.info = info;
+    public void setName(String name) {
+        this.name = name;
+    }
+
+    public HashMap<String, String> getOnline() {
+        return online;
+    }
+
+    public void setOnline(HashMap<String, String> online) {
+        this.online = online;
+    }
+
+    @Override
+    public String toString() {
+        return "ChatRoom{" +
+                "messages=" + messages +
+                ", name='" + name + '\'' +
+                ", online=" + online +
+                '}';
     }
 }

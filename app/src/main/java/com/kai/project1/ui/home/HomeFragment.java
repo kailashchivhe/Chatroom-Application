@@ -9,7 +9,6 @@ import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
-import androidx.recyclerview.widget.RecyclerView;
 
 import android.text.InputType;
 import android.view.LayoutInflater;
@@ -21,12 +20,8 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.kai.project1.R;
-import com.kai.project1.adapter.ChatRoomsAdapter;
 import com.kai.project1.databinding.FragmentHomeBinding;
-import com.kai.project1.model.ChatRooms;
 import com.kai.project1.utils.FirebaseHelper;
-
-import java.util.List;
 
 public class HomeFragment extends Fragment {
 
@@ -66,7 +61,8 @@ public class HomeFragment extends Fragment {
             return true;
         }
         else if (id == R.id.action_new_chat) {
-            createRoom();
+            FirebaseHelper.getAllChatRooms();
+//            createRoom();
             return true;
         }
         else if (id == R.id.action_logout) {
@@ -87,9 +83,9 @@ public class HomeFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-        List<ChatRooms> chatRoomsList = FirebaseHelper.getAllChatRooms();
+//        List<ChatRooms> chatRoomsList = FirebaseHelper.getAllChatRooms();
         binding.chatRoomsList.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.chatRoomsList.setAdapter(new ChatRoomsAdapter(chatRoomsList));
+//        binding.chatRoomsList.setAdapter(new ChatRoomsAdapter(chatRoomsList));
     }
 
     private void onProfileClicked(){

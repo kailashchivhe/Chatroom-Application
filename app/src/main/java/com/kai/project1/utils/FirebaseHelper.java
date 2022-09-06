@@ -31,15 +31,18 @@ import com.kai.project1.listener.LoginListener;
 import com.kai.project1.listener.ProfileListener;
 import com.kai.project1.listener.ProfileRetrieveListener;
 import com.kai.project1.listener.RegisterListener;
+import com.kai.project1.model.ChatRoom;
+import com.kai.project1.model.Message;
+import com.kai.project1.model.OnlineUsers;
 import com.kai.project1.model.User;
 
 import java.io.ByteArrayOutputStream;
 import java.text.SimpleDateFormat;
+import java.util.ArrayList;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Objects;
-import java.util.UUID;
 
 public class FirebaseHelper {
     static FirebaseAuth firebaseAuth;
@@ -210,21 +213,56 @@ public class FirebaseHelper {
     }
 
     public static void getAllChatRooms(){
+        ArrayList<ChatRoom> chatRoomArrayList = new ArrayList<>();
         CollectionReference dr = db.collection("chatrooms");
         dr.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
             @Override
             public void onComplete(@NonNull Task<QuerySnapshot> task) {
-
+                if(task.isSuccessful()) {
+                    for (DocumentSnapshot documentSnapshot : task.getResult().getDocuments()) {
+                        ChatRoom chatRoom = new ChatRoom();
+                        chatRoom.setName((String) documentSnapshot.get("name"));
+                        chatRoom.setChatId(documentSnapshot.getId());
+                        HashMap<String, String> onlineMap = (HashMap<String, String>) documentSnapshot.get("online");
+                        chatRoom.setOnline(onlineMap);
+                        ArrayList<Message> messageArrayList = new ArrayList<>();
+                        dr.document(documentSnapshot.getId()).collection("messages").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+                            @Override
+                            public void onComplete(@NonNull Task<QuerySnapshot> task1) {
+                                if(task1.isSuccessful()){
+                                    for(DocumentSnapshot documentSnapshot1: task1.getResult().getDocuments()){
+                                        Message message = new Message();
+                                        message.setMessage((String) documentSnapshot1.get("message"));
+                                        message.setLikes((Map<String, Boolean>) documentSnapshot1.get("likes"));
+                                        message.setUserId((String) documentSnapshot1.get("userId"));
+                                        message.setUserName((String) documentSnapshot1.get("userName"));
+                                        message.setDate(documentSnapshot1.get("date").toString());
+                                        messageArrayList.add(message);
+                                    }
+                                    chatRoom.setMessages(messageArrayList);
+                                    //TODO add success listener
+                                    chatRoomArrayList.add(chatRoom);
+                                }
+                                else{
+                                    //TODO add failure listener
+                                }
+                            }
+                        });
+                    }
+                }
+                else{
+                    //TODO add failure listener
+                }
             }
         });
     }
 
     public static void postMessage(String chatRoomId){
-        chatRoomId = "THQV0n7mQyAFH97zbARd";
         Map<String, Object> messageMap = new HashMap<String, Object>();
         messageMap.put( "likes", new HashMap<String,Boolean>() );
         messageMap.put("message", "Hi");
         messageMap.put("userId", firebaseAuth.getUid());
+        messageMap.put("userName", firebaseAuth.getCurrentUser().getDisplayName());
         @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
         Date date = new Date();
         messageMap.put("date", formatter.format(date) );
@@ -239,13 +277,37 @@ public class FirebaseHelper {
                 });
     }
 
+    public static void deleteMessage(String chatRoomId, String messageId ){
+        firebaseFirestore.collection("chatrooms").document(chatRoomId).collection("messages").document(messageId).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
+                    //TODO add success listener
+                }
+                else{
+                    //TODO add failure listener
+                }
+            }
+        });
+    }
+
     public static void createChatRoom(String name){
         Map<String, Object> chat = new HashMap<String, Object>();
         chat.put("name", name);
-        Map<String, Boolean> onlineUsers = new HashMap<String, Boolean>();
-        onlineUsers.put(firebaseAuth.getUid(), true );
+        Map<String, String> onlineUsers = new HashMap<String, String>();
+        onlineUsers.put(firebaseAuth.getUid(), Objects.requireNonNull(firebaseAuth.getCurrentUser()).getDisplayName() );
         chat.put("online", onlineUsers);
-        firebaseFirestore.collection("chatrooms").add(chat);
+        firebaseFirestore.collection("chatrooms").add(chat).addOnCompleteListener(new OnCompleteListener<DocumentReference>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentReference> task) {
+                if(task.isSuccessful()){
+
+                }
+                else{
+
+                }
+            }
+        });
     }
 
     public static void likeMessage(String messageId, String chatId, boolean isLiked){
@@ -280,46 +342,32 @@ public class FirebaseHelper {
     }
 
     public static void getOnlineUsers(String chatRoomId){
-        firebaseFirestore.collection("project1/chatrooms/"+chatRoomId+"/online/users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        ArrayList<OnlineUsers> onlineUsers = new ArrayList<>();
+        firebaseFirestore.collection("chatrooms").document(chatRoomId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if( task.isSuccessful() ){
-                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    HashMap<String, String> onlineMap = (HashMap<String, String>) task.getResult().get("online");
+                    for (Map.Entry<String, String> entry : onlineMap.entrySet()) {
+                        OnlineUsers onlineUsers1 = new OnlineUsers();
+                        onlineUsers1.setId( entry.getKey() );
+                        onlineUsers1.setUserName(entry.getValue());
+                        onlineUsers.add(onlineUsers1);
                     }
+                    //TODO success listener
+                }
+                else{
+                    //TODO failure listener
                 }
             }
         });
     }
 
     public static void addOnlineUser(String chatRoomId){
-        firebaseFirestore.collection("project1/chatrooms/"+chatRoomId+"/online/users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if( task.isSuccessful() ){
-                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
 
-                    }
-                }
-            }
-        });
     }
 
     public static void removeOnlineUser(String chatRoomId){
-        firebaseFirestore.collection("project1/chatrooms/"+chatRoomId+"/online/users").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-            @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                if( task.isSuccessful() ){
-                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-
-                    }
-                }
-            }
-        });
-    }
-
-    public static void getAllChatRoomMessage(String chatRoomId){
 
     }
-
 }
