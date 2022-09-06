@@ -312,29 +312,33 @@ public class FirebaseHelper {
 
     public static void likeMessage(String messageId, String chatId, boolean isLiked){
         if( isLiked ){
-            firebaseFirestore.collection("project1/chatrooms/"+chatId+"/chats/messages"+messageId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            HashMap<String, Object> userMap = new HashMap<>();
+            userMap.put("likes."+firebaseAuth.getUid(), FieldValue.delete() );
+            firebaseFirestore.collection("chatrooms").document(chatId).collection("messages").document(messageId).update( userMap ).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                        Map<String, Object> deleteData = new HashMap<>();
-                        deleteData.put("likes."+getUser().getUid(), FieldValue.delete());
-                        firebaseFirestore.collection("project1/chatrooms/"+chatId+"/chats/messages"+messageId).document(document.getId()).update(deleteData);
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()){
+
+                    }
+                    else{
+
                     }
                 }
             });
         }
         else{
-            firebaseFirestore.collection("project1/chatrooms/"+chatId+"/chats/messages"+messageId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            HashMap<String, Boolean> likesMap = new HashMap<>();
+            likesMap.put(firebaseAuth.getUid(), true );
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("likes", likesMap );
+            firebaseFirestore.collection("chatrooms").document(chatId).collection("messages").document(messageId).set(map, SetOptions.merge() ).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if( task.isSuccessful() ){
-                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                            Map<String, Boolean> likes = new HashMap<>();
-                            Map<String, Object> map = new HashMap<>();
-                            likes.put(getUser().getUid(), true);
-                            map.put("likes", likes );
-                            firebaseFirestore.collection("project1/chatrooms/"+chatId+"/chats/messages"+messageId).document(document.getId()).set( map, SetOptions.merge() );
-                        }
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()){
+
+                    }
+                    else{
+
                     }
                 }
             });
@@ -364,10 +368,36 @@ public class FirebaseHelper {
     }
 
     public static void addOnlineUser(String chatRoomId){
+        HashMap<String, String> userMap = new HashMap<>();
+        userMap.put(firebaseAuth.getUid(), firebaseAuth.getCurrentUser().getDisplayName() );
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("online", userMap );
+        firebaseFirestore.collection("chatrooms").document(chatRoomId).set(map, SetOptions.merge() ).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
 
+                }
+                else{
+
+                }
+            }
+        });
     }
 
     public static void removeOnlineUser(String chatRoomId){
+        HashMap<String, Object> userMap = new HashMap<>();
+        userMap.put("online."+firebaseAuth.getUid(), FieldValue.delete() );
+        firebaseFirestore.collection("chatrooms").document(chatRoomId).update( userMap ).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
 
+                }
+                else{
+
+                }
+            }
+        });
     }
 }
