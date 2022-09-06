@@ -318,4 +318,8 @@ public class FirebaseHelper {
         });
     }
 
+    public static void getAllChatRoomMessage(String chatRoomId){
+
+    }
+
 }
