@@ -10,8 +10,18 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kai.project1.R;
+import com.kai.project1.model.Message;
+import com.kai.project1.model.OnlineUser;
+
+import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatHolder>{
+
+    List<Message> messageList;
+
+    public ChatAdapter(List<Message> messageList) {
+        this.messageList = messageList;
+    }
 
     @NonNull
     @Override
@@ -28,7 +38,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatHolder>{
 
     @Override
     public int getItemCount() {
-        return 0;
+        return messageList.size();
     }
 }
 
@@ -47,6 +57,7 @@ class ChatHolder extends RecyclerView.ViewHolder{
         message = itemView.findViewById(R.id.Message);
         name = itemView.findViewById(R.id.textViewName);
         time = itemView.findViewById(R.id.textViewTime);
+        view = itemView;
     }
 }
 

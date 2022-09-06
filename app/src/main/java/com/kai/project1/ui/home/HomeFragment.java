@@ -23,7 +23,10 @@ import android.widget.EditText;
 import com.kai.project1.R;
 import com.kai.project1.adapter.ChatRoomsAdapter;
 import com.kai.project1.databinding.FragmentHomeBinding;
+import com.kai.project1.model.ChatRooms;
 import com.kai.project1.utils.FirebaseHelper;
+
+import java.util.List;
 
 public class HomeFragment extends Fragment {
 
@@ -84,8 +87,9 @@ public class HomeFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
+        List<ChatRooms> chatRoomsList = FirebaseHelper.getAllChatRooms();
         binding.chatRoomsList.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.chatRoomsList.setAdapter(new ChatRoomsAdapter());
+        binding.chatRoomsList.setAdapter(new ChatRoomsAdapter(chatRoomsList));
     }
 
     private void onProfileClicked(){
