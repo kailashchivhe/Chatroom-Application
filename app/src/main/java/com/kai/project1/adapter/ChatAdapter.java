@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kai.project1.R;
 import com.kai.project1.model.Message;
+import com.kai.project1.utils.FirebaseHelper;
 
 import java.util.List;
 
@@ -32,7 +33,25 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull ChatHolder holder, int position) {
-
+        Message message = messageList.get(position);
+        holder.message.setText(message.getMessage());
+//        holder.userImage.setImageBitmap();
+        holder.name.setText(message.getUserName());
+        holder.time.setText(message.getDate());
+        holder.view.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                //Do like or Unlike
+            }
+        });
+        holder.delete.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                // Message ID required
+//                onDeleteClicked(holder);
+            }
+        });
+        //Delete Part Left
     }
 
     @Override
@@ -44,6 +63,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatHolder>{
 class ChatHolder extends RecyclerView.ViewHolder{
 
     ImageView userImage;
+    ImageView delete;
     ImageView like;
     TextView message;
     TextView name;
@@ -56,6 +76,7 @@ class ChatHolder extends RecyclerView.ViewHolder{
         message = itemView.findViewById(R.id.Message);
         name = itemView.findViewById(R.id.textViewName);
         time = itemView.findViewById(R.id.textViewTime);
+        delete = itemView.findViewById(R.id.imageViewDelete);
         view = itemView;
     }
 }

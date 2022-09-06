@@ -27,10 +27,17 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.kai.project1.listener.AddOnlineUserListener;
+import com.kai.project1.listener.CreateChatRoomListener;
+import com.kai.project1.listener.DeleteMessageListener;
+import com.kai.project1.listener.GetAllChatRoomsListener;
+import com.kai.project1.listener.GetOnlineUsersListener;
 import com.kai.project1.listener.LoginListener;
+import com.kai.project1.listener.PostMessageListener;
 import com.kai.project1.listener.ProfileListener;
 import com.kai.project1.listener.ProfileRetrieveListener;
 import com.kai.project1.listener.RegisterListener;
+import com.kai.project1.listener.RemoveOnlineUserListener;
 import com.kai.project1.model.ChatRoom;
 import com.kai.project1.model.Message;
 import com.kai.project1.model.OnlineUsers;
@@ -212,7 +219,7 @@ public class FirebaseHelper {
 
     }
 
-    public static void getAllChatRooms(){
+    public static void getAllChatRooms(GetAllChatRoomsListener getAllChatRoomsListener){
         ArrayList<ChatRoom> chatRoomArrayList = new ArrayList<>();
         CollectionReference dr = db.collection("chatrooms");
         dr.get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -242,9 +249,11 @@ public class FirebaseHelper {
                                     chatRoom.setMessages(messageArrayList);
                                     //TODO add success listener
                                     chatRoomArrayList.add(chatRoom);
+                                    getAllChatRoomsListener.allChatRooms(chatRoomArrayList);
                                 }
                                 else{
                                     //TODO add failure listener
+                                    getAllChatRoomsListener.allChatRoomsFailure(task1.getException().getMessage());
                                 }
                             }
                         });
@@ -252,15 +261,16 @@ public class FirebaseHelper {
                 }
                 else{
                     //TODO add failure listener
+                    getAllChatRoomsListener.allChatRoomsFailure(task.getException().getMessage());
                 }
             }
         });
     }
 
-    public static void postMessage(String chatRoomId){
+    public static void postMessage(String chatRoomId, String message, PostMessageListener postMessageListener){
         Map<String, Object> messageMap = new HashMap<String, Object>();
         messageMap.put( "likes", new HashMap<String,Boolean>() );
-        messageMap.put("message", "Hi");
+        messageMap.put("message", message);
         messageMap.put("userId", firebaseAuth.getUid());
         messageMap.put("userName", firebaseAuth.getCurrentUser().getDisplayName());
         @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -270,14 +280,14 @@ public class FirebaseHelper {
         firebaseFirestore.collection("chatrooms").document(chatRoomId).collection("messages")
                 .add(messageMap)
                 .addOnSuccessListener(documentReference -> {
-
+                    postMessageListener.messagePosted();
                 })
                 .addOnFailureListener(e -> {
-
+                    postMessageListener.messagePostedFailure(e.getMessage());
                 });
     }
 
-    public static void deleteMessage(String chatRoomId, String messageId ){
+    public static void deleteMessage(String chatRoomId, String messageId, DeleteMessageListener deleteMessageListener){
         firebaseFirestore.collection("chatrooms").document(chatRoomId).collection("messages").document(messageId).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -286,12 +296,13 @@ public class FirebaseHelper {
                 }
                 else{
                     //TODO add failure listener
+                    deleteMessageListener.messageDeletedFailure(task.getException().getMessage());
                 }
             }
         });
     }
 
-    public static void createChatRoom(String name){
+    public static void createChatRoom(String name, CreateChatRoomListener createChatRoomListener){
         Map<String, Object> chat = new HashMap<String, Object>();
         chat.put("name", name);
         Map<String, String> onlineUsers = new HashMap<String, String>();
@@ -301,10 +312,10 @@ public class FirebaseHelper {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
                 if(task.isSuccessful()){
-
+                    createChatRoomListener.chatRoomCreated();
                 }
                 else{
-
+                    createChatRoomListener.chatRoomCreatedFailure(task.getException().getMessage());
                 }
             }
         });
@@ -345,7 +356,7 @@ public class FirebaseHelper {
         }
     }
 
-    public static void getOnlineUsers(String chatRoomId){
+    public static void getOnlineUsers(String chatRoomId, GetOnlineUsersListener getOnlineUsersListener){
         ArrayList<OnlineUsers> onlineUsers = new ArrayList<>();
         firebaseFirestore.collection("chatrooms").document(chatRoomId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -359,15 +370,17 @@ public class FirebaseHelper {
                         onlineUsers.add(onlineUsers1);
                     }
                     //TODO success listener
+                    getOnlineUsersListener.allOnlineUsers(onlineUsers);
                 }
                 else{
                     //TODO failure listener
+                    getOnlineUsersListener.allOnlineUsersFailure(task.getException().getMessage());
                 }
             }
         });
     }
 
-    public static void addOnlineUser(String chatRoomId){
+    public static void addOnlineUser(String chatRoomId, AddOnlineUserListener addOnlineUserListener){
         HashMap<String, String> userMap = new HashMap<>();
         userMap.put(firebaseAuth.getUid(), firebaseAuth.getCurrentUser().getDisplayName() );
         HashMap<String, Object> map = new HashMap<>();
@@ -376,16 +389,15 @@ public class FirebaseHelper {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
-
                 }
                 else{
-
+                    addOnlineUserListener.addOnlineUserFailure(task.getException().getMessage());
                 }
             }
         });
     }
 
-    public static void removeOnlineUser(String chatRoomId){
+    public static void removeOnlineUser(String chatRoomId, RemoveOnlineUserListener removeOnlineUserListener){
         HashMap<String, Object> userMap = new HashMap<>();
         userMap.put("online."+firebaseAuth.getUid(), FieldValue.delete() );
         firebaseFirestore.collection("chatrooms").document(chatRoomId).update( userMap ).addOnCompleteListener(new OnCompleteListener<Void>() {
@@ -395,7 +407,7 @@ public class FirebaseHelper {
 
                 }
                 else{
-
+                    removeOnlineUserListener.removeOnlineUserFailure(task.getException().getMessage());
                 }
             }
         });

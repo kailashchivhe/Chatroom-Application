@@ -21,11 +21,19 @@ import android.widget.EditText;
 
 import com.kai.project1.R;
 import com.kai.project1.databinding.FragmentHomeBinding;
+import com.kai.project1.listener.CreateChatRoomListener;
+import com.kai.project1.listener.GetAllChatRoomsListener;
+import com.kai.project1.model.ChatRoom;
 import com.kai.project1.utils.FirebaseHelper;
 
-public class HomeFragment extends Fragment {
+import java.util.ArrayList;
+import java.util.List;
+
+public class HomeFragment extends Fragment implements GetAllChatRoomsListener, CreateChatRoomListener {
 
     FragmentHomeBinding binding;
+    AlertDialog.Builder builder;
+    List<ChatRoom> chatRoomsList;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -61,8 +69,8 @@ public class HomeFragment extends Fragment {
             return true;
         }
         else if (id == R.id.action_new_chat) {
-            FirebaseHelper.getAllChatRooms();
-//            createRoom();
+//            FirebaseHelper.getAllChatRooms(this);
+            createRoom();
             return true;
         }
         else if (id == R.id.action_logout) {
@@ -83,7 +91,15 @@ public class HomeFragment extends Fragment {
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
         super.onActivityCreated(savedInstanceState);
-//        List<ChatRooms> chatRoomsList = FirebaseHelper.getAllChatRooms();
+        builder = new AlertDialog.Builder(getActivity());
+        builder.setTitle("Alert!");
+        builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        FirebaseHelper.getAllChatRooms(this);
         binding.chatRoomsList.setLayoutManager(new LinearLayoutManager(getContext()));
 //        binding.chatRoomsList.setAdapter(new ChatRoomsAdapter(chatRoomsList));
     }
@@ -111,7 +127,7 @@ public class HomeFragment extends Fragment {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String chatRoomName = input.getText().toString();
-                FirebaseHelper.createChatRoom(chatRoomName);
+                onCreateRoomClicked(chatRoomName);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -123,6 +139,31 @@ public class HomeFragment extends Fragment {
 
         builder.show();
     }
+    void onCreateRoomClicked(String chatRoomName){
+        FirebaseHelper.createChatRoom(chatRoomName,this);
+    }
 
+    @Override
+    public void allChatRooms(ArrayList<ChatRoom> chatRoomArrayList) {
+        chatRoomsList = chatRoomArrayList;
+    }
 
+    @Override
+    public void allChatRoomsFailure(String message) {
+        builder.setMessage(message);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    @Override
+    public void chatRoomCreated() {
+        //list reload required
+    }
+
+    @Override
+    public void chatRoomCreatedFailure(String message) {
+        builder.setMessage(message);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
 }

@@ -6,6 +6,7 @@
     <string name="registration_fragment_label">Registration Fragment</string>
     <string name="home_fragment_label">Home Fragment</string>
     <string name="profile_fragment_label">Profile Fragment</string>
+    <string name="chat_room_fragment_label">Chat Room Fragment</string>
     <string name="next">Next</string>
     <string name="previous">Previous</string>
 
