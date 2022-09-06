@@ -21,6 +21,7 @@ import android.widget.EditText;
 
 import com.kai.project1.R;
 import com.kai.project1.databinding.FragmentHomeBinding;
+import com.kai.project1.listener.CreateChatRoomListener;
 import com.kai.project1.listener.GetAllChatRoomsListener;
 import com.kai.project1.model.ChatRoom;
 import com.kai.project1.utils.FirebaseHelper;
@@ -28,7 +29,7 @@ import com.kai.project1.utils.FirebaseHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class HomeFragment extends Fragment implements GetAllChatRoomsListener {
+public class HomeFragment extends Fragment implements GetAllChatRoomsListener, CreateChatRoomListener {
 
     FragmentHomeBinding binding;
     AlertDialog.Builder builder;
@@ -126,7 +127,7 @@ public class HomeFragment extends Fragment implements GetAllChatRoomsListener {
             @Override
             public void onClick(DialogInterface dialog, int which) {
                 String chatRoomName = input.getText().toString();
-                FirebaseHelper.createChatRoom(chatRoomName);
+                onCreateRoomClicked(chatRoomName);
             }
         });
         builder.setNegativeButton("Cancel", new DialogInterface.OnClickListener() {
@@ -138,7 +139,9 @@ public class HomeFragment extends Fragment implements GetAllChatRoomsListener {
 
         builder.show();
     }
-
+    void onCreateRoomClicked(String chatRoomName){
+        FirebaseHelper.createChatRoom(chatRoomName,this);
+    }
 
     @Override
     public void allChatRooms(ArrayList<ChatRoom> chatRoomArrayList) {
@@ -147,6 +150,18 @@ public class HomeFragment extends Fragment implements GetAllChatRoomsListener {
 
     @Override
     public void allChatRoomsFailure(String message) {
+        builder.setMessage(message);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    @Override
+    public void chatRoomCreated() {
+
+    }
+
+    @Override
+    public void chatRoomCreatedFailure(String message) {
         builder.setMessage(message);
         AlertDialog alertDialog = builder.create();
         alertDialog.show();

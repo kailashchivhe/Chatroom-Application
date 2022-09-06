@@ -27,12 +27,17 @@ import com.google.firebase.storage.FirebaseStorage;
 import com.google.firebase.storage.StorageReference;
 import com.google.firebase.storage.StorageTask;
 import com.google.firebase.storage.UploadTask;
+import com.kai.project1.listener.AddOnlineUserListener;
+import com.kai.project1.listener.CreateChatRoomListener;
+import com.kai.project1.listener.DeleteMessageListener;
 import com.kai.project1.listener.GetAllChatRoomsListener;
 import com.kai.project1.listener.GetOnlineUsersListener;
 import com.kai.project1.listener.LoginListener;
+import com.kai.project1.listener.PostMessageListener;
 import com.kai.project1.listener.ProfileListener;
 import com.kai.project1.listener.ProfileRetrieveListener;
 import com.kai.project1.listener.RegisterListener;
+import com.kai.project1.listener.RemoveOnlineUserListener;
 import com.kai.project1.model.ChatRoom;
 import com.kai.project1.model.Message;
 import com.kai.project1.model.OnlineUsers;
@@ -262,10 +267,10 @@ public class FirebaseHelper {
         });
     }
 
-    public static void postMessage(String chatRoomId){
+    public static void postMessage(String chatRoomId, String message, PostMessageListener postMessageListener){
         Map<String, Object> messageMap = new HashMap<String, Object>();
         messageMap.put( "likes", new HashMap<String,Boolean>() );
-        messageMap.put("message", "Hi");
+        messageMap.put("message", message);
         messageMap.put("userId", firebaseAuth.getUid());
         messageMap.put("userName", firebaseAuth.getCurrentUser().getDisplayName());
         @SuppressLint("SimpleDateFormat") SimpleDateFormat formatter = new SimpleDateFormat("dd/MM/yyyy HH:mm:ss");
@@ -275,14 +280,14 @@ public class FirebaseHelper {
         firebaseFirestore.collection("chatrooms").document(chatRoomId).collection("messages")
                 .add(messageMap)
                 .addOnSuccessListener(documentReference -> {
-
+                    postMessageListener.messagePosted();
                 })
                 .addOnFailureListener(e -> {
-
+                    postMessageListener.messagePostedFailure(e.getMessage());
                 });
     }
 
-    public static void deleteMessage(String chatRoomId, String messageId ){
+    public static void deleteMessage(String chatRoomId, String messageId, DeleteMessageListener deleteMessageListener){
         firebaseFirestore.collection("chatrooms").document(chatRoomId).collection("messages").document(messageId).delete().addOnCompleteListener(new OnCompleteListener<Void>() {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
@@ -291,12 +296,13 @@ public class FirebaseHelper {
                 }
                 else{
                     //TODO add failure listener
+                    deleteMessageListener.messageDeletedFailure(task.getException().getMessage());
                 }
             }
         });
     }
 
-    public static void createChatRoom(String name){
+    public static void createChatRoom(String name, CreateChatRoomListener createChatRoomListener){
         Map<String, Object> chat = new HashMap<String, Object>();
         chat.put("name", name);
         Map<String, String> onlineUsers = new HashMap<String, String>();
@@ -309,7 +315,7 @@ public class FirebaseHelper {
 
                 }
                 else{
-
+                    createChatRoomListener.chatRoomCreatedFailure(task.getException().getMessage());
                 }
             }
         });
@@ -317,29 +323,33 @@ public class FirebaseHelper {
 
     public static void likeMessage(String messageId, String chatId, boolean isLiked){
         if( isLiked ){
-            firebaseFirestore.collection("project1/chatrooms/"+chatId+"/chats/messages"+messageId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            HashMap<String, Object> userMap = new HashMap<>();
+            userMap.put("likes."+firebaseAuth.getUid(), FieldValue.delete() );
+            firebaseFirestore.collection("chatrooms").document(chatId).collection("messages").document(messageId).update( userMap ).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                        Map<String, Object> deleteData = new HashMap<>();
-                        deleteData.put("likes."+getUser().getUid(), FieldValue.delete());
-                        firebaseFirestore.collection("project1/chatrooms/"+chatId+"/chats/messages"+messageId).document(document.getId()).update(deleteData);
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()){
+
+                    }
+                    else{
+
                     }
                 }
             });
         }
         else{
-            firebaseFirestore.collection("project1/chatrooms/"+chatId+"/chats/messages"+messageId).get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            HashMap<String, Boolean> likesMap = new HashMap<>();
+            likesMap.put(firebaseAuth.getUid(), true );
+            HashMap<String, Object> map = new HashMap<>();
+            map.put("likes", likesMap );
+            firebaseFirestore.collection("chatrooms").document(chatId).collection("messages").document(messageId).set(map, SetOptions.merge() ).addOnCompleteListener(new OnCompleteListener<Void>() {
                 @Override
-                public void onComplete(@NonNull Task<QuerySnapshot> task) {
-                    if( task.isSuccessful() ){
-                        for (QueryDocumentSnapshot document : Objects.requireNonNull(task.getResult())) {
-                            Map<String, Boolean> likes = new HashMap<>();
-                            Map<String, Object> map = new HashMap<>();
-                            likes.put(getUser().getUid(), true);
-                            map.put("likes", likes );
-                            firebaseFirestore.collection("project1/chatrooms/"+chatId+"/chats/messages"+messageId).document(document.getId()).set( map, SetOptions.merge() );
-                        }
+                public void onComplete(@NonNull Task<Void> task) {
+                    if(task.isSuccessful()){
+
+                    }
+                    else{
+
                     }
                 }
             });
@@ -370,11 +380,37 @@ public class FirebaseHelper {
         });
     }
 
-    public static void addOnlineUser(String chatRoomId){
+    public static void addOnlineUser(String chatRoomId, AddOnlineUserListener addOnlineUserListener){
+        HashMap<String, String> userMap = new HashMap<>();
+        userMap.put(firebaseAuth.getUid(), firebaseAuth.getCurrentUser().getDisplayName() );
+        HashMap<String, Object> map = new HashMap<>();
+        map.put("online", userMap );
+        firebaseFirestore.collection("chatrooms").document(chatRoomId).set(map, SetOptions.merge() ).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
 
+                }
+                else{
+                    addOnlineUserListener.addOnlineUserFailure(task.getException().getMessage());
+                }
+            }
+        });
     }
 
-    public static void removeOnlineUser(String chatRoomId){
+    public static void removeOnlineUser(String chatRoomId, RemoveOnlineUserListener removeOnlineUserListener){
+        HashMap<String, Object> userMap = new HashMap<>();
+        userMap.put("online."+firebaseAuth.getUid(), FieldValue.delete() );
+        firebaseFirestore.collection("chatrooms").document(chatRoomId).update( userMap ).addOnCompleteListener(new OnCompleteListener<Void>() {
+            @Override
+            public void onComplete(@NonNull Task<Void> task) {
+                if(task.isSuccessful()){
 
+                }
+                else{
+                    removeOnlineUserListener.removeOnlineUserFailure(task.getException().getMessage());
+                }
+            }
+        });
     }
 }
