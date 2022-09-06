@@ -389,7 +389,6 @@ public class FirebaseHelper {
             @Override
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
-
                 }
                 else{
                     addOnlineUserListener.addOnlineUserFailure(task.getException().getMessage());
