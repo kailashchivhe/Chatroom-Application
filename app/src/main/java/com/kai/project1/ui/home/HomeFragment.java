@@ -69,8 +69,8 @@ public class HomeFragment extends Fragment implements GetAllChatRoomsListener, C
             return true;
         }
         else if (id == R.id.action_new_chat) {
-            FirebaseHelper.getAllChatRooms(this);
-//            createRoom();
+//            FirebaseHelper.getAllChatRooms(this);
+            createRoom();
             return true;
         }
         else if (id == R.id.action_logout) {
@@ -157,7 +157,7 @@ public class HomeFragment extends Fragment implements GetAllChatRoomsListener, C
 
     @Override
     public void chatRoomCreated() {
-
+        //list reload required
     }
 
     @Override

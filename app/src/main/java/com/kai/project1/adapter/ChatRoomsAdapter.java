@@ -1,5 +1,6 @@
 package com.kai.project1.adapter;
 
+import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -17,7 +18,6 @@ import java.util.List;
 public class ChatRoomsAdapter extends RecyclerView.Adapter<ChatRoomsHolder>{
 
     List<ChatRoom> chatRoomList;
-
     public ChatRoomsAdapter(List<ChatRoom> chatRoomsList) {
         this.chatRoomList = chatRoomList;
     }
@@ -38,8 +38,9 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<ChatRoomsHolder>{
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-//                chatRoom.getChatId();
-                //NavHostFragment.findNavController(this).navigate(R.id.action_HomeFragment_to_chat_roomFragment);
+                Bundle args = new Bundle();
+                //requires fragment for navigation
+//                NavHostFragment.findNavController(this).navigate(R.id.action_HomeFragment_to_chat_roomFragment);
             }
         });
     }

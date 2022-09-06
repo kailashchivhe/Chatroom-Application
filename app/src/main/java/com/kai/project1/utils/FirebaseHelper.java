@@ -312,7 +312,7 @@ public class FirebaseHelper {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
                 if(task.isSuccessful()){
-
+                    createChatRoomListener.chatRoomCreated();
                 }
                 else{
                     createChatRoomListener.chatRoomCreatedFailure(task.getException().getMessage());

@@ -6,6 +6,7 @@ import android.os.Bundle;
 
 import androidx.annotation.Nullable;
 import androidx.fragment.app.Fragment;
+import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.LinearLayoutManager;
 
 import android.view.LayoutInflater;
@@ -149,6 +150,7 @@ public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener
     @Override
     public void messagePosted() {
         //ToDo after message posted
+        NavHostFragment.findNavController(this).navigate(R.id.action_Chat_roomFragment_to_Chat_roomFragment);
     }
 
     @Override
