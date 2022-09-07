@@ -23,6 +23,7 @@ import com.kai.project1.listener.GetAllMessagesListener;
 import com.kai.project1.listener.GetOnlineUsersListener;
 import com.kai.project1.listener.PostMessageListener;
 import com.kai.project1.listener.RemoveOnlineUserListener;
+import com.kai.project1.model.ChatRoom;
 import com.kai.project1.model.Message;
 import com.kai.project1.model.OnlineUsers;
 import com.kai.project1.utils.FirebaseHelper;
@@ -33,10 +34,12 @@ import java.util.List;
 public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener, GetAllMessagesListener, AddOnlineUserListener, RemoveOnlineUserListener, PostMessageListener {
 
     FragmentChatRoomBinding binding;
-    List<Message> messageList;
-    List<OnlineUsers> onlineUserList;
+    List<Message> messageList = new ArrayList<Message>();;
+    List<OnlineUsers> onlineUserList = new ArrayList<OnlineUsers>();;
     AlertDialog.Builder builder;
     private String mChatRoomID;
+    OnlineUsersAdapter onlineUsersAdapter;
+    ChatAdapter chatAdapter;
 
     public ChatRoomFragment() {
         // Required empty public constructor
@@ -67,7 +70,9 @@ public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener
 
     @Override
     public void onActivityCreated(@Nullable Bundle savedInstanceState) {
+
         super.onActivityCreated(savedInstanceState);
+        FirebaseHelper.addOnlineUser(mChatRoomID,this);
         builder = new AlertDialog.Builder(getActivity());
         builder.setTitle("Alert!");
         builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
@@ -76,13 +81,16 @@ public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener
 
             }
         });
+        onlineUsersAdapter = new OnlineUsersAdapter(onlineUserList);
+        chatAdapter = new ChatAdapter(messageList);
         FirebaseHelper.getOnlineUsers(mChatRoomID,this);
 
         binding.recyclerViewOnline.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
-        binding.recyclerViewOnline.setAdapter(new OnlineUsersAdapter(onlineUserList));
+        binding.recyclerViewOnline.setAdapter(onlineUsersAdapter);
 
+        FirebaseHelper.getChatRoomMessages(mChatRoomID,this);
         binding.recyclerViewMessages.setLayoutManager(new LinearLayoutManager(getContext()));
-        binding.recyclerViewMessages.setAdapter(new ChatAdapter(messageList));
+        binding.recyclerViewMessages.setAdapter(chatAdapter);
 
         binding.buttonSend.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -94,12 +102,20 @@ public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener
 
     }
 
+    @Override
+    public void onDestroy() {
+        super.onDestroy();
+        FirebaseHelper.removeOnlineUser(mChatRoomID,this);
+    }
+
     void onSendClicked(String message){
         FirebaseHelper.postMessage(mChatRoomID, message, this);
     }
     @Override
     public void allOnlineUsers(ArrayList<OnlineUsers> onlineUsers) {
-        onlineUserList = onlineUsers;
+        onlineUserList.clear();
+        onlineUserList.addAll(onlineUsers);
+        onlineUsersAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -111,7 +127,9 @@ public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener
 
     @Override
     public void allMessages(ArrayList<Message> messages) {
-        messageList = messages;
+        messageList.clear();
+        messageList.addAll(messages);
+        chatAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -123,7 +141,8 @@ public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener
 
     @Override
     public void addOnlineUser() {
-
+//        onlineUserList.clear();
+        onlineUsersAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -135,7 +154,7 @@ public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener
 
     @Override
     public void removeOnlineUser() {
-
+        onlineUsersAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -148,6 +167,8 @@ public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener
     @Override
     public void messagePosted() {
         //ToDo after message posted
+//        messageList.clear();
+        chatAdapter.notifyDataSetChanged();
     }
 
     @Override

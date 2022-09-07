@@ -12,15 +12,22 @@ import androidx.recyclerview.widget.RecyclerView;
 import com.kai.project1.R;
 import com.kai.project1.model.Message;
 import com.kai.project1.utils.FirebaseHelper;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
 public class ChatAdapter extends RecyclerView.Adapter<ChatHolder>{
 
     List<Message> messageList;
+    String mChatRoomID;
 
     public ChatAdapter(List<Message> messageList) {
         this.messageList = messageList;
+    }
+
+    public ChatAdapter(List<Message> messageList, String mChatRoomID) {
+        this.messageList = messageList;
+        this.mChatRoomID = mChatRoomID;
     }
 
     @NonNull
@@ -35,28 +42,36 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatHolder>{
     public void onBindViewHolder(@NonNull ChatHolder holder, int position) {
         Message message = messageList.get(position);
         holder.message.setText(message.getMessage());
-//        holder.userImage.setImageBitmap();
+//        Picasso.get().load(message).into(holder.userImage);
         holder.name.setText(message.getUserName());
         holder.time.setText(message.getDate());
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 //Do like or Unlike
+//                FirebaseHelper.likeMessage();
             }
         });
-        holder.delete.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                // Message ID required
-//                onDeleteClicked(holder);
-            }
-        });
-        //Delete Part Left
+        if(message.getUserId() != FirebaseHelper.getUser().getUid()){
+            holder.delete.setVisibility(View.INVISIBLE);
+        }
+        else{
+            holder.delete.setVisibility(View.VISIBLE);
+            holder.delete.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+//                    onDeleteClicked(message.);
+                }
+            });
+        }
     }
 
     @Override
     public int getItemCount() {
         return messageList.size();
+    }
+    void onDeleteClicked(String messageID){
+//        FirebaseHelper.deleteMessage();
     }
 }
 
