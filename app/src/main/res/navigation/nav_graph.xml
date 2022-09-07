@@ -59,7 +59,7 @@
 
     <fragment
         android:id="@+id/ChatRoomFragment"
-        android:name="com.kai.project1.ui.profile.ProfileFragment"
+        android:name="com.kai.project1.ui.chat.ChatRoomFragment"
         android:label="@string/chat_room_fragment_label"
         tools:layout="@layout/fragment_chat_room"/>
 

@@ -31,6 +31,7 @@ import com.kai.project1.listener.AddOnlineUserListener;
 import com.kai.project1.listener.CreateChatRoomListener;
 import com.kai.project1.listener.DeleteMessageListener;
 import com.kai.project1.listener.GetAllChatRoomsListener;
+import com.kai.project1.listener.GetAllMessagesListener;
 import com.kai.project1.listener.GetOnlineUsersListener;
 import com.kai.project1.listener.LoginListener;
 import com.kai.project1.listener.PostMessageListener;
@@ -390,7 +391,7 @@ public class FirebaseHelper {
         });
     }
 
-    public static void getChatRoomMessages(String chatId){
+    public static void getChatRoomMessages(String chatId, GetAllMessagesListener getAllMessagesListener){
         ArrayList<Message> messageArrayList = new ArrayList<>();
         CollectionReference dr = firebaseFirestore.collection("chatrooms");
         dr.document(chatId).collection("messages").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
@@ -407,8 +408,10 @@ public class FirebaseHelper {
                         messageArrayList.add(message);
                     }
                     //TODO success
+                    getAllMessagesListener.allMessages(messageArrayList);
                 } else {
                     //TODO add failure listener
+                    getAllMessagesListener.allMessagesFailure(task1.getException().toString());
                 }
             }
         });

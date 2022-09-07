@@ -11,6 +11,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kai.project1.R;
 import com.kai.project1.model.OnlineUsers;
+import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
@@ -32,11 +33,9 @@ public class OnlineUsersAdapter extends RecyclerView.Adapter<OnlineUsersHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull OnlineUsersHolder holder, int position) {
-//        OnlineUsers onlineUser =
-//        OnlineUser onlineUser = onlineUserList.get(position);
-//        holder.textView.setText(onlineUser.getName());
-//        holder.imageView.setImageBitmap(onlineUser.getImageUrl());
-//        Url to bitmap
+        OnlineUsers onlineUser = onlineUserList.get(position);
+        holder.textView.setText(onlineUser.getUserName());
+//        Picasso.get().load(onlineUser).into(holder.imageView);
     }
 
     @Override
