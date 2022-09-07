@@ -413,4 +413,21 @@ public class FirebaseHelper {
             }
         });
     }
+
+    public static void getUserProfileImage(String userId){
+        DocumentReference dr = db.collection("project1").document("Users").collection("Users").document(userId);
+        dr.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
+                if(task.isSuccessful()){
+                    DocumentSnapshot ds = task.getResult();
+                    String url = ds.get("uri").toString();
+                    //TODO success listener
+                }
+                else{
+                    //TODO failure listener
+                }
+            }
+        });
+    }
 }
