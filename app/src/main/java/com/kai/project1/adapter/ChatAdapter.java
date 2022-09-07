@@ -70,6 +70,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatHolder> implements Pro
             }
         });
 
+        holder.likeCount.setText(message.getLikes().size() + " Likes");
+
         if(!message.getUserId().contains(FirebaseHelper.getUser().getUid())){
             holder.delete.setVisibility(View.INVISIBLE);
         }
@@ -88,6 +90,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatHolder> implements Pro
     public int getItemCount() {
         return messageList.size();
     }
+
     void onDeleteClicked(String messageID){
         FirebaseHelper.deleteMessage(mChatRoomID,messageID,deleteMessageListener);
         //can adapter implements listener
@@ -132,6 +135,7 @@ class ChatHolder extends RecyclerView.ViewHolder{
     TextView message;
     TextView name;
     TextView time;
+    TextView likeCount;
     View view;
     public ChatHolder(@NonNull View itemView) {
         super(itemView);
@@ -141,6 +145,7 @@ class ChatHolder extends RecyclerView.ViewHolder{
         name = itemView.findViewById(R.id.textViewName);
         time = itemView.findViewById(R.id.textViewTime);
         delete = itemView.findViewById(R.id.imageViewDelete);
+        likeCount = itemView.findViewById(R.id.likeTextView);
         view = itemView;
     }
 }
