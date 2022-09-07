@@ -52,7 +52,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatHolder>{
 //                FirebaseHelper.likeMessage();
             }
         });
-        if(message.getUserId() != FirebaseHelper.getUser().getUid()){
+        if(!message.getUserId().contains(FirebaseHelper.getUser().getUid())){
             holder.delete.setVisibility(View.INVISIBLE);
         }
         else{

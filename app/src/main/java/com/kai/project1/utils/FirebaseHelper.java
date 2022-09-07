@@ -343,6 +343,7 @@ public class FirebaseHelper {
             @Override
             public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
                 if(error == null){
+                    onlineUsers.clear();
                     HashMap<String, String> onlineMap = (HashMap<String, String>) value.get("online");
                     for (Map.Entry<String, String> entry : onlineMap.entrySet()) {
                         OnlineUsers onlineUsers1 = new OnlineUsers();
@@ -401,6 +402,7 @@ public class FirebaseHelper {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error == null) {
+                    messageArrayList.clear();
                     for (DocumentSnapshot documentSnapshot1 : value.getDocuments()) {
                         Message message = new Message();
                         message.setMessage((String) documentSnapshot1.get("message"));
