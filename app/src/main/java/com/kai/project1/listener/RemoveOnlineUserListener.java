@@ -1,6 +1,6 @@
 package com.kai.project1.listener;
 
 public interface RemoveOnlineUserListener {
-    void removeOnlinerUser();
+    void removeOnlineUser();
     void removeOnlineUserFailure(String message);
 }

@@ -61,11 +61,6 @@
         android:id="@+id/ChatRoomFragment"
         android:name="com.kai.project1.ui.profile.ProfileFragment"
         android:label="@string/chat_room_fragment_label"
-        tools:layout="@layout/fragment_chat_room">
-
-        <action
-            android:id="@+id/action_Chat_roomFragment_to_Chat_roomFragment"
-            app:destination="@id/ChatRoomFragment" />
-    </fragment>
+        tools:layout="@layout/fragment_chat_room"/>
 
 </navigation>

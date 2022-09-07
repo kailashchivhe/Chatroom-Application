@@ -36,7 +36,6 @@ public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener
     List<Message> messageList;
     List<OnlineUsers> onlineUserList;
     AlertDialog.Builder builder;
-
     private String mChatRoomID;
 
     public ChatRoomFragment() {
@@ -54,6 +53,7 @@ public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         if (getArguments() != null) {
+            mChatRoomID = getArguments().getString("chatId", "");
         }
     }
 
@@ -77,8 +77,6 @@ public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener
             }
         });
         FirebaseHelper.getOnlineUsers(mChatRoomID,this);
-//        FirebaseHelper.getAllMessages(mChatRoomID,this);
-
 
         binding.recyclerViewOnline.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
         binding.recyclerViewOnline.setAdapter(new OnlineUsersAdapter(onlineUserList));
@@ -124,7 +122,7 @@ public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener
     }
 
     @Override
-    public void addOnlinerUser() {
+    public void addOnlineUser() {
 
     }
 
@@ -136,7 +134,7 @@ public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener
     }
 
     @Override
-    public void removeOnlinerUser() {
+    public void removeOnlineUser() {
 
     }
 
@@ -150,7 +148,6 @@ public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener
     @Override
     public void messagePosted() {
         //ToDo after message posted
-        NavHostFragment.findNavController(this).navigate(R.id.action_Chat_roomFragment_to_Chat_roomFragment);
     }
 
     @Override

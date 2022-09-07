@@ -20,6 +20,7 @@ import android.view.ViewGroup;
 import android.widget.EditText;
 
 import com.kai.project1.R;
+import com.kai.project1.adapter.ChatRoomsAdapter;
 import com.kai.project1.databinding.FragmentHomeBinding;
 import com.kai.project1.listener.CreateChatRoomListener;
 import com.kai.project1.listener.GetAllChatRoomsListener;
@@ -33,7 +34,8 @@ public class HomeFragment extends Fragment implements GetAllChatRoomsListener, C
 
     FragmentHomeBinding binding;
     AlertDialog.Builder builder;
-    List<ChatRoom> chatRoomsList;
+    List<ChatRoom> chatRoomsList = new ArrayList<ChatRoom>();
+    ChatRoomsAdapter chatRoomsAdapter;
     public HomeFragment() {
         // Required empty public constructor
     }
@@ -69,7 +71,6 @@ public class HomeFragment extends Fragment implements GetAllChatRoomsListener, C
             return true;
         }
         else if (id == R.id.action_new_chat) {
-//            FirebaseHelper.getAllChatRooms(this);
             createRoom();
             return true;
         }
@@ -101,7 +102,8 @@ public class HomeFragment extends Fragment implements GetAllChatRoomsListener, C
         });
         FirebaseHelper.getAllChatRooms(this);
         binding.chatRoomsList.setLayoutManager(new LinearLayoutManager(getContext()));
-//        binding.chatRoomsList.setAdapter(new ChatRoomsAdapter(chatRoomsList));
+        chatRoomsAdapter = new ChatRoomsAdapter(chatRoomsList);
+        binding.chatRoomsList.setAdapter(chatRoomsAdapter);
     }
 
     private void onProfileClicked(){
@@ -145,7 +147,9 @@ public class HomeFragment extends Fragment implements GetAllChatRoomsListener, C
 
     @Override
     public void allChatRooms(ArrayList<ChatRoom> chatRoomArrayList) {
-        chatRoomsList = chatRoomArrayList;
+        chatRoomsList.clear();
+        chatRoomsList.addAll(chatRoomArrayList);
+        chatRoomsAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -156,8 +160,11 @@ public class HomeFragment extends Fragment implements GetAllChatRoomsListener, C
     }
 
     @Override
-    public void chatRoomCreated() {
+    public void chatRoomCreated(String chatRoomId) {
         //list reload required
+        Bundle bundle = new Bundle();
+        bundle.putSerializable( "chatId", chatRoomId );
+        NavHostFragment.findNavController( this ).navigate( R.id.action_HomeFragment_to_chat_roomFragment, bundle );
     }
 
     @Override

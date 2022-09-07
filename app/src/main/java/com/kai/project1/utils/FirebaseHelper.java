@@ -232,32 +232,9 @@ public class FirebaseHelper {
                         chatRoom.setChatId(documentSnapshot.getId());
                         HashMap<String, String> onlineMap = (HashMap<String, String>) documentSnapshot.get("online");
                         chatRoom.setOnline(onlineMap);
-                        ArrayList<Message> messageArrayList = new ArrayList<>();
-                        dr.document(documentSnapshot.getId()).collection("messages").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
-                            @Override
-                            public void onComplete(@NonNull Task<QuerySnapshot> task1) {
-                                if(task1.isSuccessful()){
-                                    for(DocumentSnapshot documentSnapshot1: task1.getResult().getDocuments()){
-                                        Message message = new Message();
-                                        message.setMessage((String) documentSnapshot1.get("message"));
-                                        message.setLikes((Map<String, Boolean>) documentSnapshot1.get("likes"));
-                                        message.setUserId((String) documentSnapshot1.get("userId"));
-                                        message.setUserName((String) documentSnapshot1.get("userName"));
-                                        message.setDate(documentSnapshot1.get("date").toString());
-                                        messageArrayList.add(message);
-                                    }
-                                    chatRoom.setMessages(messageArrayList);
-                                    //TODO add success listener
-                                    chatRoomArrayList.add(chatRoom);
-                                    getAllChatRoomsListener.allChatRooms(chatRoomArrayList);
-                                }
-                                else{
-                                    //TODO add failure listener
-                                    getAllChatRoomsListener.allChatRoomsFailure(task1.getException().getMessage());
-                                }
-                            }
-                        });
+                        chatRoomArrayList.add(chatRoom);
                     }
+                    getAllChatRoomsListener.allChatRooms(chatRoomArrayList);
                 }
                 else{
                     //TODO add failure listener
@@ -312,7 +289,7 @@ public class FirebaseHelper {
             @Override
             public void onComplete(@NonNull Task<DocumentReference> task) {
                 if(task.isSuccessful()){
-                    createChatRoomListener.chatRoomCreated();
+                    createChatRoomListener.chatRoomCreated(task.getResult().getId());
                 }
                 else{
                     createChatRoomListener.chatRoomCreatedFailure(task.getException().getMessage());
@@ -408,6 +385,30 @@ public class FirebaseHelper {
                 }
                 else{
                     removeOnlineUserListener.removeOnlineUserFailure(task.getException().getMessage());
+                }
+            }
+        });
+    }
+
+    public static void getChatRoomMessages(String chatId){
+        ArrayList<Message> messageArrayList = new ArrayList<>();
+        CollectionReference dr = firebaseFirestore.collection("chatrooms");
+        dr.document(chatId).collection("messages").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+            @Override
+            public void onComplete(@NonNull Task<QuerySnapshot> task1) {
+                if (task1.isSuccessful()) {
+                    for (DocumentSnapshot documentSnapshot1 : task1.getResult().getDocuments()) {
+                        Message message = new Message();
+                        message.setMessage((String) documentSnapshot1.get("message"));
+                        message.setLikes((Map<String, Boolean>) documentSnapshot1.get("likes"));
+                        message.setUserId((String) documentSnapshot1.get("userId"));
+                        message.setUserName((String) documentSnapshot1.get("userName"));
+                        message.setDate(documentSnapshot1.get("date").toString());
+                        messageArrayList.add(message);
+                    }
+                    //TODO success
+                } else {
+                    //TODO add failure listener
                 }
             }
         });

@@ -18,8 +18,9 @@ import java.util.List;
 public class ChatRoomsAdapter extends RecyclerView.Adapter<ChatRoomsHolder>{
 
     List<ChatRoom> chatRoomList;
+
     public ChatRoomsAdapter(List<ChatRoom> chatRoomsList) {
-        this.chatRoomList = chatRoomList;
+        this.chatRoomList = chatRoomsList;
     }
 
     @NonNull
