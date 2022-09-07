@@ -142,7 +142,7 @@ public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener
     @Override
     public void addOnlineUser() {
 //        onlineUserList.clear();
-        onlineUsersAdapter.notifyDataSetChanged();
+//        onlineUsersAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -154,7 +154,7 @@ public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener
 
     @Override
     public void removeOnlineUser() {
-        onlineUsersAdapter.notifyDataSetChanged();
+//        onlineUsersAdapter.notifyDataSetChanged();
     }
 
     @Override
@@ -168,7 +168,7 @@ public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener
     public void messagePosted() {
         //ToDo after message posted
 //        messageList.clear();
-        chatAdapter.notifyDataSetChanged();
+//        chatAdapter.notifyDataSetChanged();
     }
 
     @Override

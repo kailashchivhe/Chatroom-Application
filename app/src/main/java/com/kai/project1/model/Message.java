@@ -9,6 +9,7 @@ public class Message implements Serializable {
     String date;
     String userId;
     String userName;
+    String messageId;
 
     public Map<String, Boolean> getLikes() {
         return likes;
@@ -50,6 +51,14 @@ public class Message implements Serializable {
         this.userId = userId;
     }
 
+    public String getMessageId() {
+        return messageId;
+    }
+
+    public void setMessageId(String messageId) {
+        this.messageId = messageId;
+    }
+
     @Override
     public String toString() {
         return "Message{" +
@@ -57,6 +66,8 @@ public class Message implements Serializable {
                 ", message='" + message + '\'' +
                 ", date='" + date + '\'' +
                 ", userId='" + userId + '\'' +
+                ", userName='" + userName + '\'' +
+                ", messageId='" + messageId + '\'' +
                 '}';
     }
 }
