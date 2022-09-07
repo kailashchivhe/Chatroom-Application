@@ -1,5 +1,7 @@
 package com.kai.project1.adapter;
 
+import android.app.AlertDialog;
+import android.content.DialogInterface;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -10,20 +12,20 @@ import androidx.annotation.NonNull;
 import androidx.recyclerview.widget.RecyclerView;
 
 import com.kai.project1.R;
+import com.kai.project1.listener.DeleteMessageListener;
+import com.kai.project1.listener.ProfileDisplayListener;
 import com.kai.project1.model.Message;
 import com.kai.project1.utils.FirebaseHelper;
 import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class ChatAdapter extends RecyclerView.Adapter<ChatHolder>{
+public class ChatAdapter extends RecyclerView.Adapter<ChatHolder> implements DeleteMessageListener, ProfileDisplayListener {
 
     List<Message> messageList;
     String mChatRoomID;
-
-    public ChatAdapter(List<Message> messageList) {
-        this.messageList = messageList;
-    }
+    AlertDialog.Builder builder;
+    ChatHolder holder;
 
     public ChatAdapter(List<Message> messageList, String mChatRoomID) {
         this.messageList = messageList;
@@ -40,9 +42,10 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatHolder>{
 
     @Override
     public void onBindViewHolder(@NonNull ChatHolder holder, int position) {
+        this.holder = holder;
         Message message = messageList.get(position);
         holder.message.setText(message.getMessage());
-//        Picasso.get().load(message).into(holder.userImage);
+        FirebaseHelper.getUserProfileImage(message.getUserId(),this);
         holder.name.setText(message.getUserName());
         holder.time.setText(message.getDate());
         holder.view.setOnClickListener(new View.OnClickListener() {
@@ -60,7 +63,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatHolder>{
             holder.delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    onDeleteClicked(message.);
+                    onDeleteClicked(message.getMessageId());
                 }
             });
         }
@@ -71,7 +74,58 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatHolder>{
         return messageList.size();
     }
     void onDeleteClicked(String messageID){
-//        FirebaseHelper.deleteMessage();
+        FirebaseHelper.deleteMessage(mChatRoomID,messageID,this);
+        //can adapter implements listener
+    }
+
+    @Override
+    public void messageDeleted() {
+        builder = new AlertDialog.Builder(builder.getContext());
+        builder.setTitle("Deleted");
+        builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        builder.setMessage("Message Deleted");
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    @Override
+    public void messageDeletedFailure(String message) {
+        builder = new AlertDialog.Builder(builder.getContext());
+        builder.setTitle("Alert!");
+        builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        builder.setMessage(message);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    @Override
+    public void profileDisplay(String uri) {
+        Picasso.get().load(uri).into(holder.userImage);
+    }
+
+    @Override
+    public void profileDisplayFailure(String message) {
+        builder = new AlertDialog.Builder(builder.getContext());
+        builder.setTitle("Alert!");
+        builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        builder.setMessage(message);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
     }
 }
 
