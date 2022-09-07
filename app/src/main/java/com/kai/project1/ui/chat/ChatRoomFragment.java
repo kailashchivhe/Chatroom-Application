@@ -19,6 +19,7 @@ import com.kai.project1.adapter.OnlineUsersAdapter;
 import com.kai.project1.databinding.FragmentChatRoomBinding;
 import com.kai.project1.databinding.FragmentHomeBinding;
 import com.kai.project1.listener.AddOnlineUserListener;
+import com.kai.project1.listener.DeleteMessageListener;
 import com.kai.project1.listener.GetAllMessagesListener;
 import com.kai.project1.listener.GetOnlineUsersListener;
 import com.kai.project1.listener.PostMessageListener;
@@ -31,7 +32,7 @@ import com.kai.project1.utils.FirebaseHelper;
 import java.util.ArrayList;
 import java.util.List;
 
-public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener, GetAllMessagesListener, AddOnlineUserListener, RemoveOnlineUserListener, PostMessageListener {
+public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener, GetAllMessagesListener, AddOnlineUserListener, RemoveOnlineUserListener, PostMessageListener, DeleteMessageListener {
 
     FragmentChatRoomBinding binding;
     List<Message> messageList = new ArrayList<Message>();;
@@ -82,7 +83,7 @@ public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener
             }
         });
         onlineUsersAdapter = new OnlineUsersAdapter(onlineUserList);
-        chatAdapter = new ChatAdapter(messageList,mChatRoomID);
+        chatAdapter = new ChatAdapter(messageList,mChatRoomID, this);
         FirebaseHelper.getOnlineUsers(mChatRoomID,this);
 
         binding.recyclerViewOnline.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));
@@ -96,6 +97,7 @@ public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener
             @Override
             public void onClick(View v) {
                 String message = binding.editTextMessage.getText().toString();
+                binding.editTextMessage.setText("");
                 onSendClicked(message);
             }
         });
@@ -173,6 +175,36 @@ public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener
 
     @Override
     public void messagePostedFailure(String message) {
+        builder.setMessage(message);
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    @Override
+    public void messageDeleted() {
+        builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Deleted");
+        builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
+        builder.setMessage("Message Deleted");
+        AlertDialog alertDialog = builder.create();
+        alertDialog.show();
+    }
+
+    @Override
+    public void messageDeletedFailure(String message) {
+        builder = new AlertDialog.Builder(getContext());
+        builder.setTitle("Alert!");
+        builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialogInterface, int i) {
+
+            }
+        });
         builder.setMessage(message);
         AlertDialog alertDialog = builder.create();
         alertDialog.show();

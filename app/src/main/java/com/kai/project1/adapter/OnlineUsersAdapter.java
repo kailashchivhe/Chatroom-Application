@@ -40,7 +40,7 @@ public class OnlineUsersAdapter extends RecyclerView.Adapter<OnlineUsersHolder> 
     public void onBindViewHolder(@NonNull OnlineUsersHolder holder, int position) {
         this.holder = holder;
         OnlineUsers onlineUser = onlineUserList.get(position);
-        holder.textView.setText(onlineUser.getUserName());
+        holder.textView.setText(onlineUser.getUserName().split(" ")[0]);
         FirebaseHelper.getUserProfileImage(onlineUser.getId(),this);
     }
 
@@ -51,7 +51,7 @@ public class OnlineUsersAdapter extends RecyclerView.Adapter<OnlineUsersHolder> 
 
     @Override
     public void profileDisplay(String uri) {
-        Picasso.get().load(uri).into(holder.imageView);
+        Picasso.get().load(uri).placeholder(R.mipmap.ic_launcher_round).into(holder.imageView);
     }
 
     @Override

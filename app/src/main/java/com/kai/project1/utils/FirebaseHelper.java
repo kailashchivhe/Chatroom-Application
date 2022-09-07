@@ -400,7 +400,7 @@ public class FirebaseHelper {
     public static void getChatRoomMessages(String chatId, GetAllMessagesListener getAllMessagesListener ){
         ArrayList<Message> messageArrayList = new ArrayList<>();
         CollectionReference dr = firebaseFirestore.collection("chatrooms");
-        dr.document(chatId).collection("messages").addSnapshotListener(new EventListener<QuerySnapshot>() {
+        dr.document(chatId).collection("messages").orderBy("date").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
             public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
                 if (error == null) {
@@ -430,9 +430,11 @@ public class FirebaseHelper {
             public void onComplete(@NonNull Task<DocumentSnapshot> task) {
                 if(task.isSuccessful()){
                     DocumentSnapshot ds = task.getResult();
-                    String url = ds.get("uri").toString();
-                    //TODO success listener
-                    profileDisplayListener.profileDisplay(url);
+                    if( ds != null && ds.get("uri") != null ) {
+                        String url = ds.get("uri").toString();
+                        //TODO success listener
+                        profileDisplayListener.profileDisplay(url);
+                    }
                 }
                 else{
                     profileDisplayListener.profileDisplayFailure(task.getException().getMessage());

@@ -13,6 +13,7 @@ import androidx.recyclerview.widget.RecyclerView;
 
 import com.kai.project1.R;
 import com.kai.project1.listener.DeleteMessageListener;
+import com.kai.project1.listener.LikeListener;
 import com.kai.project1.listener.ProfileDisplayListener;
 import com.kai.project1.model.Message;
 import com.kai.project1.utils.FirebaseHelper;
@@ -20,16 +21,18 @@ import com.squareup.picasso.Picasso;
 
 import java.util.List;
 
-public class ChatAdapter extends RecyclerView.Adapter<ChatHolder> implements DeleteMessageListener, ProfileDisplayListener {
+public class ChatAdapter extends RecyclerView.Adapter<ChatHolder> implements ProfileDisplayListener, LikeListener {
 
     List<Message> messageList;
     String mChatRoomID;
     AlertDialog.Builder builder;
     ChatHolder holder;
+    DeleteMessageListener deleteMessageListener;
 
-    public ChatAdapter(List<Message> messageList, String mChatRoomID) {
+    public ChatAdapter(List<Message> messageList, String mChatRoomID, DeleteMessageListener deleteMessageListener) {
         this.messageList = messageList;
         this.mChatRoomID = mChatRoomID;
+        this.deleteMessageListener = deleteMessageListener;
     }
 
     @NonNull
@@ -52,9 +55,21 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatHolder> implements Del
             @Override
             public void onClick(View v) {
                 //Do like or Unlike
-//                FirebaseHelper.likeMessage();
             }
         });
+        if(message.getLikes().containsKey(FirebaseHelper.getUser().getUid())){
+            holder.like.setImageResource(R.drawable.like_favorite);
+        }
+        else{
+            holder.like.setImageResource(R.drawable.like_not_favorite);
+        }
+        holder.like.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                FirebaseHelper.likeMessage(message.getMessageId(), mChatRoomID, message.getLikes().containsKey(FirebaseHelper.getUser().getUid()) );
+            }
+        });
+
         if(!message.getUserId().contains(FirebaseHelper.getUser().getUid())){
             holder.delete.setVisibility(View.INVISIBLE);
         }
@@ -74,58 +89,38 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatHolder> implements Del
         return messageList.size();
     }
     void onDeleteClicked(String messageID){
-        FirebaseHelper.deleteMessage(mChatRoomID,messageID,this);
+        FirebaseHelper.deleteMessage(mChatRoomID,messageID,deleteMessageListener);
         //can adapter implements listener
     }
 
     @Override
-    public void messageDeleted() {
-        builder = new AlertDialog.Builder(builder.getContext());
-        builder.setTitle("Deleted");
-        builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        });
-        builder.setMessage("Message Deleted");
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-    }
-
-    @Override
-    public void messageDeletedFailure(String message) {
-        builder = new AlertDialog.Builder(builder.getContext());
-        builder.setTitle("Alert!");
-        builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
-
-            }
-        });
-        builder.setMessage(message);
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
-    }
-
-    @Override
     public void profileDisplay(String uri) {
-        Picasso.get().load(uri).into(holder.userImage);
+        Picasso.get().load(uri).placeholder(R.mipmap.ic_launcher_round).into(holder.userImage);
     }
 
     @Override
     public void profileDisplayFailure(String message) {
-        builder = new AlertDialog.Builder(builder.getContext());
-        builder.setTitle("Alert!");
-        builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialogInterface, int i) {
+//        builder = new AlertDialog.Builder(builder.getContext());
+//        builder.setTitle("Alert!");
+//        builder.setNeutralButton("Ok", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialogInterface, int i) {
+//
+//            }
+//        });
+//        builder.setMessage(message);
+//        AlertDialog alertDialog = builder.create();
+//        alertDialog.show();
+    }
 
-            }
-        });
-        builder.setMessage(message);
-        AlertDialog alertDialog = builder.create();
-        alertDialog.show();
+    @Override
+    public void onSuccess() {
+        notifyDataSetChanged();
+    }
+
+    @Override
+    public void onFailure(Exception exception) {
+        notifyDataSetChanged();
     }
 }
 
