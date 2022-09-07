@@ -38,6 +38,7 @@ import com.kai.project1.listener.GetAllMessagesListener;
 import com.kai.project1.listener.GetOnlineUsersListener;
 import com.kai.project1.listener.LoginListener;
 import com.kai.project1.listener.PostMessageListener;
+import com.kai.project1.listener.ProfileDisplayListener;
 import com.kai.project1.listener.ProfileListener;
 import com.kai.project1.listener.ProfileRetrieveListener;
 import com.kai.project1.listener.RegisterListener;
@@ -274,6 +275,7 @@ public class FirebaseHelper {
             public void onComplete(@NonNull Task<Void> task) {
                 if(task.isSuccessful()){
                     //TODO add success listener
+                    deleteMessageListener.messageDeleted();
                 }
                 else{
                     //TODO add failure listener
@@ -421,7 +423,7 @@ public class FirebaseHelper {
         });
     }
 
-    public static void getUserProfileImage(String userId){
+    public static void getUserProfileImage(String userId, ProfileDisplayListener profileDisplayListener){
         DocumentReference dr = db.collection("project1").document("Users").collection("Users").document(userId);
         dr.get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
             @Override
@@ -430,8 +432,10 @@ public class FirebaseHelper {
                     DocumentSnapshot ds = task.getResult();
                     String url = ds.get("uri").toString();
                     //TODO success listener
+                    profileDisplayListener.profileDisplay(url);
                 }
                 else{
+                    profileDisplayListener.profileDisplayFailure(task.getException().getMessage());
                     //TODO failure listener
                 }
             }
