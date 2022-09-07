@@ -6,6 +6,7 @@ import android.net.Uri;
 import android.util.Log;
 
 import androidx.annotation.NonNull;
+import androidx.annotation.Nullable;
 
 import com.google.android.gms.tasks.OnCompleteListener;
 import com.google.android.gms.tasks.OnFailureListener;
@@ -18,8 +19,10 @@ import com.google.firebase.auth.UserProfileChangeRequest;
 import com.google.firebase.firestore.CollectionReference;
 import com.google.firebase.firestore.DocumentReference;
 import com.google.firebase.firestore.DocumentSnapshot;
+import com.google.firebase.firestore.EventListener;
 import com.google.firebase.firestore.FieldValue;
 import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
 import com.google.firebase.firestore.QueryDocumentSnapshot;
 import com.google.firebase.firestore.QuerySnapshot;
 import com.google.firebase.firestore.SetOptions;
@@ -335,11 +338,11 @@ public class FirebaseHelper {
 
     public static void getOnlineUsers(String chatRoomId, GetOnlineUsersListener getOnlineUsersListener){
         ArrayList<OnlineUsers> onlineUsers = new ArrayList<>();
-        firebaseFirestore.collection("chatrooms").document(chatRoomId).get().addOnCompleteListener(new OnCompleteListener<DocumentSnapshot>() {
+        firebaseFirestore.collection("chatrooms").document(chatRoomId).addSnapshotListener(new EventListener<DocumentSnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<DocumentSnapshot> task) {
-                if(task.isSuccessful()){
-                    HashMap<String, String> onlineMap = (HashMap<String, String>) task.getResult().get("online");
+            public void onEvent(@Nullable DocumentSnapshot value, @Nullable FirebaseFirestoreException error) {
+                if(error == null){
+                    HashMap<String, String> onlineMap = (HashMap<String, String>) value.get("online");
                     for (Map.Entry<String, String> entry : onlineMap.entrySet()) {
                         OnlineUsers onlineUsers1 = new OnlineUsers();
                         onlineUsers1.setId( entry.getKey() );
@@ -351,7 +354,7 @@ public class FirebaseHelper {
                 }
                 else{
                     //TODO failure listener
-                    getOnlineUsersListener.allOnlineUsersFailure(task.getException().getMessage());
+                    getOnlineUsersListener.allOnlineUsersFailure(error.getMessage());
                 }
             }
         });
@@ -393,11 +396,11 @@ public class FirebaseHelper {
     public static void getChatRoomMessages(String chatId){
         ArrayList<Message> messageArrayList = new ArrayList<>();
         CollectionReference dr = firebaseFirestore.collection("chatrooms");
-        dr.document(chatId).collection("messages").get().addOnCompleteListener(new OnCompleteListener<QuerySnapshot>() {
+        dr.document(chatId).collection("messages").addSnapshotListener(new EventListener<QuerySnapshot>() {
             @Override
-            public void onComplete(@NonNull Task<QuerySnapshot> task1) {
-                if (task1.isSuccessful()) {
-                    for (DocumentSnapshot documentSnapshot1 : task1.getResult().getDocuments()) {
+            public void onEvent(@Nullable QuerySnapshot value, @Nullable FirebaseFirestoreException error) {
+                if (error == null) {
+                    for (DocumentSnapshot documentSnapshot1 : value.getDocuments()) {
                         Message message = new Message();
                         message.setMessage((String) documentSnapshot1.get("message"));
                         message.setLikes((Map<String, Boolean>) documentSnapshot1.get("likes"));
