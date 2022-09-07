@@ -1,5 +1,6 @@
 package com.kai.project1.adapter;
 
+import android.annotation.SuppressLint;
 import android.os.Bundle;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -7,6 +8,8 @@ import android.view.ViewGroup;
 import android.widget.TextView;
 
 import androidx.annotation.NonNull;
+import androidx.core.app.NavUtils;
+import androidx.navigation.Navigation;
 import androidx.navigation.fragment.NavHostFragment;
 import androidx.recyclerview.widget.RecyclerView;
 
@@ -32,16 +35,16 @@ public class ChatRoomsAdapter extends RecyclerView.Adapter<ChatRoomsHolder>{
     }
 
     @Override
-    public void onBindViewHolder(@NonNull ChatRoomsHolder holder, int position) {
+    public void onBindViewHolder(@NonNull ChatRoomsHolder holder, @SuppressLint("RecyclerView") int position) {
         ChatRoom chatRoom = chatRoomList.get(position);
         holder.chatRoomName.setText(chatRoom.getName());
 
         holder.view.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                Bundle args = new Bundle();
-                //requires fragment for navigation
-//                NavHostFragment.findNavController(this).navigate(R.id.action_HomeFragment_to_chat_roomFragment);
+                Bundle bundle = new Bundle();
+                bundle.putSerializable( "chatId", chatRoomList.get(position).getChatId() );
+                Navigation.findNavController(v).navigate( R.id.action_HomeFragment_to_chat_roomFragment, bundle);
             }
         });
     }
