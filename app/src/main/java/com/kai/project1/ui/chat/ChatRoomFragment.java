@@ -82,7 +82,7 @@ public class ChatRoomFragment extends Fragment implements GetOnlineUsersListener
             }
         });
         onlineUsersAdapter = new OnlineUsersAdapter(onlineUserList);
-        chatAdapter = new ChatAdapter(messageList);
+        chatAdapter = new ChatAdapter(messageList,mChatRoomID);
         FirebaseHelper.getOnlineUsers(mChatRoomID,this);
 
         binding.recyclerViewOnline.setLayoutManager(new LinearLayoutManager(getContext(),LinearLayoutManager.HORIZONTAL,false));

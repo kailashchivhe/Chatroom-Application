@@ -21,9 +21,9 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatHolder>{
     List<Message> messageList;
     String mChatRoomID;
 
-    public ChatAdapter(List<Message> messageList) {
-        this.messageList = messageList;
-    }
+//    public ChatAdapter(List<Message> messageList) {
+//        this.messageList = messageList;
+//    }
 
     public ChatAdapter(List<Message> messageList, String mChatRoomID) {
         this.messageList = messageList;
@@ -60,7 +60,7 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatHolder>{
             holder.delete.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-//                    onDeleteClicked(message.);
+                    onDeleteClicked(message.getMessageId());
                 }
             });
         }
@@ -71,7 +71,8 @@ public class ChatAdapter extends RecyclerView.Adapter<ChatHolder>{
         return messageList.size();
     }
     void onDeleteClicked(String messageID){
-//        FirebaseHelper.deleteMessage();
+//        FirebaseHelper.deleteMessage(mChatRoomID,messageID,this);
+        //can adapter implements listener
     }
 }
 
